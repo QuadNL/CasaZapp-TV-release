@@ -66,6 +66,29 @@
     </div>
   </footer>
 
+  <script>
+    // Every code block gets a copy button, top right.
+    document.querySelectorAll('pre').forEach(function (pre) {
+      var wrap = document.createElement('div');
+      wrap.className = 'code-wrap';
+      pre.parentNode.insertBefore(wrap, pre);
+      wrap.appendChild(pre);
+      var button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'copy';
+      button.textContent = 'Copy';
+      button.addEventListener('click', function () {
+        navigator.clipboard.writeText(pre.innerText.replace(/
+$/, '')).then(function () {
+          button.textContent = 'Copied';
+          button.classList.add('done');
+          setTimeout(function () { button.textContent = 'Copy'; button.classList.remove('done'); }, 1500);
+        });
+      });
+      wrap.appendChild(button);
+    });
+  </script>
+
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
     <symbol id="logo" viewBox="0 0 32 32">
       <rect width="32" height="32" rx="8" fill="#FFB547"/>
