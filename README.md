@@ -4,8 +4,8 @@
 
 Your own TV player, on your own server.
 
-CasaZapp TV plays the IPTV subscription you already have. It runs on a server at home, so your
-channel lists, favourites, recordings and watch history stay with you.
+CasaZapp TV gives you the best set-topbox experience you want. It runs on docker, so your
+channel lists, favourites, recordings and watch history stay with you in sync across all your devices.
 
 There are two parts:
 
