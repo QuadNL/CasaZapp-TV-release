@@ -1,0 +1,30 @@
+name: Something doesn't work
+description: A bug in the server, the web app or the Android app
+body:
+  - type: input
+    id: server
+    attributes:
+      label: Server version
+      description: Settings → About, or the bottom of the web app's menu
+      placeholder: "0.4.0"
+    validations:
+      required: true
+  - type: input
+    id: app
+    attributes:
+      label: App version and device
+      description: Leave empty if it's the web app
+      placeholder: "0.4.0 on a Chromecast with Google TV"
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected, and what you got instead.
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Server log
+      description: "`docker compose logs --since 10m casazapp-tv`, with passwords and addresses removed"
+      render: text
