@@ -201,3 +201,18 @@ figcaption { color: var(--muted); font-size: 0.9rem; margin-top: 10px; }
 .zoom img { display: block; width: auto; height: auto; max-width: 96vw; max-height: 94vh; object-fit: contain; border-radius: 10px; }
 .zoom-close { position: fixed; top: 16px; right: 20px; width: 44px; height: 44px; border-radius: 50%;
   border: 1px solid var(--line); background: var(--surface); color: var(--text); font-size: 26px; cursor: pointer; }
+
+/* The opening animation, the same as the web app's (web styles.css, #133). */
+.splash { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; background: var(--bg);
+  animation: splash-out 0.4s ease 1.2s forwards; }
+.splash[hidden] { display: none; }
+.splash-logo { display: flex; flex-direction: column; align-items: center; gap: 0.85rem;
+  animation: splash-pop 0.5s cubic-bezier(0.2, 0.7, 0.3, 1.4) both; }
+.splash-house { stroke-dasharray: 92; stroke-dashoffset: 92; animation: splash-draw 0.7s ease 0.15s forwards; }
+.splash-play { opacity: 0; animation: splash-rise 0.35s ease 0.7s forwards; }
+.splash-word { opacity: 0; font: 700 1.5rem 'Sora', system-ui, sans-serif; color: var(--text);
+  animation: splash-rise 0.4s ease 0.55s forwards; }
+@keyframes splash-pop { 0% { transform: scale(0.82); opacity: 0; } 60% { transform: scale(1.04); } 100% { transform: scale(1); opacity: 1; } }
+@keyframes splash-draw { to { stroke-dashoffset: 0; } }
+@keyframes splash-rise { 0% { opacity: 0; transform: translateY(6px); } 100% { opacity: 1; transform: none; } }
+@keyframes splash-out { to { opacity: 0; visibility: hidden; } }

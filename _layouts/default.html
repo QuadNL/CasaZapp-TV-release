@@ -16,6 +16,26 @@
   <link rel="stylesheet" href="{{ '/assets/style.css' | relative_url }}">
 </head>
 <body>
+  <!-- The opening animation, as in the web app: once per visit. -->
+  <div class="splash" role="presentation" hidden>
+    <div class="splash-logo">
+      <svg viewBox="0 0 32 32" width="80" height="80" aria-hidden="true">
+        <rect width="32" height="32" rx="8" fill="#FFB547"/>
+        <path class="splash-house" d="M16 6.5 6.5 14.2V25a1.5 1.5 0 0 0 1.5 1.5h16a1.5 1.5 0 0 0 1.5-1.5V14.2z" fill="none" stroke="#1C1305" stroke-width="2.2" stroke-linejoin="round"/>
+        <path class="splash-play" d="M13.6 15.4v7.2l6-3.6z" fill="#1C1305"/>
+      </svg>
+      <span class="splash-word">CasaZapp TV</span>
+    </div>
+  </div>
+  <script>
+    (function () {
+      var el = document.querySelector('.splash');
+      try { if (sessionStorage.getItem('splash-seen') === '1') return; sessionStorage.setItem('splash-seen', '1'); } catch (e) {}
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      el.hidden = false;
+      setTimeout(function () { el.remove(); }, 1600);
+    })();
+  </script>
   <header class="top">
     <div class="wrap top-row">
       <a class="brand" href="{{ '/' | relative_url }}">
