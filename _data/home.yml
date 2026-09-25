@@ -4,7 +4,7 @@
 hero:
   title: Your own TV player,<br>on your own server.
   text: >-
-    CasaZapp TV gives you the best settopbox experience you want. It runs on docker, so your
+    CasaZapp TV gives you the best set-topbox experience you want. It runs on docker, so your
     channel lists, favourites, recordings and watch history stay with you in sync across all your devices.
 
   note: Free without any ads. 
@@ -32,7 +32,7 @@ features:
   - title: Knows your connections
     text: Your provider allows a number of streams. CasaZapp TV counts them, asks before taking one over, and shows who's watching what.
   - title: Works without the server too
-    text: The Android app can also run on its own, with a playlist on the device. Handy on the road.
+    text: The Android app can also run standalone, with a playlist on the device. Handy on the road.
 
 screens_title: One player on every screen
 screens_text: The same look and the same buttons on the TV, the phone, the tablet and the web.
@@ -84,8 +84,7 @@ steps:
 
 install_title: Install
 install_text: >-
-  The server is a single docker-compose.yml. Recordings and the pause buffer get folders of their
-  own, so a full disk never takes the database down.
+  The server is a single docker-compose.yml. Just make sure you have enough space available for recordings.
 
 faq_title: Questions
 faq:
@@ -100,4 +99,4 @@ faq:
   - q: Is it open source?
     a: No. The app and the server are free to use at home; the source code is not public.
 
-footer: Comes without any channels or content.
+footer: ©2026 - QuadNL
