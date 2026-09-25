@@ -53,13 +53,22 @@ layout: default
       {% endfor %}
     </div>
     {% for s in h.screens %}
-    <div class="gallery gallery-{{ s.shape }}" data-panel="{{ forloop.index }}" {% unless forloop.first %}hidden{% endunless %}>
-      {% for shot in s.shots %}
-      <figure>
-        <div class="shot {{ s.shape }}"><img loading="lazy" src="{{ '/assets/screens/' | append: shot.image | relative_url }}" alt="{{ shot.caption }}"></div>
-        <figcaption>{{ shot.caption }}</figcaption>
+    <div class="viewer viewer-{{ s.shape }}" data-panel="{{ forloop.index }}" {% unless forloop.first %}hidden{% endunless %}>
+      {% assign first = s.shots | first %}
+      <figure class="stage">
+        <button class="stage-shot {{ s.shape }}" type="button" aria-label="Show full size">
+          <img src="{{ '/assets/screens/' | append: first.image | relative_url }}" alt="{{ first.caption }}">
+        </button>
+        <figcaption>{{ first.caption }}</figcaption>
       </figure>
-      {% endfor %}
+      <div class="thumbs">
+        {% for shot in s.shots %}
+        <button type="button" class="thumb {{ s.shape }}" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}"
+          data-src="{{ '/assets/screens/' | append: shot.image | relative_url }}" data-caption="{{ shot.caption }}">
+          <img loading="lazy" src="{{ '/assets/screens/' | append: shot.image | relative_url }}" alt="">
+        </button>
+        {% endfor %}
+      </div>
     </div>
     {% endfor %}
   </div>
@@ -99,7 +108,29 @@ layout: default
   </div>
 </section>
 
+<dialog class="zoom" aria-label="Screenshot">
+  <form method="dialog"><button class="zoom-close" aria-label="Close">×</button></form>
+  <img alt="">
+</dialog>
+
 <script>
+  // A thumbnail shows its shot large; the large shot opens at full size.
+  document.querySelectorAll('.viewer').forEach((viewer) => {
+    const stage = viewer.querySelector('.stage img');
+    const caption = viewer.querySelector('.stage figcaption');
+    viewer.querySelectorAll('.thumb').forEach((thumb) => thumb.addEventListener('click', () => {
+      viewer.querySelectorAll('.thumb').forEach((t) => t.setAttribute('aria-pressed', String(t === thumb)));
+      stage.src = thumb.dataset.src;
+      stage.alt = caption.textContent = thumb.dataset.caption;
+    }));
+  });
+  const zoom = document.querySelector('.zoom');
+  document.querySelectorAll('.stage-shot, .device .screen').forEach((el) => el.addEventListener('click', () => {
+    zoom.querySelector('img').src = el.querySelector('img').src;
+    zoom.showModal();
+  }));
+  zoom.addEventListener('click', (e) => { if (e.target === zoom) zoom.close(); });
+
   // The screen tabs: TV, phone, tablet, web.
   const tabs = document.querySelectorAll('[data-tab]');
   tabs.forEach((tab) => tab.addEventListener('click', () => {

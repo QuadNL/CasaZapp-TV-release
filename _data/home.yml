@@ -9,8 +9,8 @@ hero:
     browser.
   note: Free to use at home. Bring your own playlist — CasaZapp TV comes without channels.
   # The pictures beside the title, from assets/screens.
-  tv: tv-home.png
-  phone: phone-player.png
+  tv: hero-tv.png
+  phone: phone-home.png
 
 # The download buttons. Leave "link" empty to show "Coming soon".
 downloads:
