@@ -23,3 +23,17 @@ https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8
 https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8
 #EXTINF:-1 tvg-id="weather" tvg-logo="https://raw.githubusercontent.com/QuadNL/CasaZapp-TV-release/main/demo/logos/weather.png" group-title="News",Weather
 https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8
+#EXTINF:-1 tvg-type="movie" tvg-logo="https://raw.githubusercontent.com/QuadNL/CasaZapp-TV-release/main/demo/posters/big-buck-bunny.png" group-title="Open movies",Big Buck Bunny (2008)
+https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4
+#EXTINF:-1 tvg-type="movie" tvg-logo="https://raw.githubusercontent.com/QuadNL/CasaZapp-TV-release/main/demo/posters/elephants-dream.png" group-title="Open movies",Elephants Dream (2006)
+https://download.blender.org/ED/elephantsdream-480-h264-st-aac.mov
+#EXTINF:-1 tvg-type="movie" tvg-logo="https://raw.githubusercontent.com/QuadNL/CasaZapp-TV-release/main/demo/posters/tears-of-steel.png" group-title="Open movies",Tears of Steel (2012)
+https://download.blender.org/demo/movies/ToS/tears_of_steel_720p.mov
+#EXTINF:-1 tvg-type="movie" tvg-logo="https://raw.githubusercontent.com/QuadNL/CasaZapp-TV-release/main/demo/posters/sintel.png" group-title="Open movies",Sintel - Trailer (2010)
+https://download.blender.org/durian/trailer/sintel_trailer-480p.mp4
+#EXTINF:-1 tvg-type="series" tvg-logo="https://raw.githubusercontent.com/QuadNL/CasaZapp-TV-release/main/demo/posters/short-clips.png" group-title="Clips",Short Clips S01E01 Jellyfish
+https://test-videos.co.uk/vids/jellyfish/mp4/h264/720/Jellyfish_720_10s_5MB.mp4
+#EXTINF:-1 tvg-type="series" tvg-logo="https://raw.githubusercontent.com/QuadNL/CasaZapp-TV-release/main/demo/posters/short-clips.png" group-title="Clips",Short Clips S01E02 The Bunny
+https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_5MB.mp4
+#EXTINF:-1 tvg-type="series" tvg-logo="https://raw.githubusercontent.com/QuadNL/CasaZapp-TV-release/main/demo/posters/short-clips.png" group-title="Clips",Short Clips S01E03 The Dragon
+https://test-videos.co.uk/vids/sintel/mp4/h264/720/Sintel_720_10s_5MB.mp4

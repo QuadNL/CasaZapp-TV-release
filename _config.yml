@@ -30,3 +30,4 @@ exclude:
   - README.md
   - demo/make-demo.mjs
   - demo/logo-tile.html
+  - demo/poster.html

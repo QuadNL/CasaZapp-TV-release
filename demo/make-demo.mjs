@@ -24,10 +24,32 @@ export const CHANNELS = [
   { id: 'weather', name: 'Weather', group: 'News', color: '#4da3ff', shows: [['Weather Now', 15], ['Outlook', 15]] },
 ];
 
+// Films and a series: Blender's open movies (CC BY, blender.org) and short test clips
+// (test-videos.co.uk), with posters made for the demo.
+const BLENDER = 'https://download.blender.org';
+const CLIPS = 'https://test-videos.co.uk/vids';
+export const FILMS = [
+  ['Big Buck Bunny (2008)', 'big-buck-bunny', 'https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4'],
+  ['Elephants Dream (2006)', 'elephants-dream', `${BLENDER}/ED/elephantsdream-480-h264-st-aac.mov`],
+  ['Tears of Steel (2012)', 'tears-of-steel', `${BLENDER}/demo/movies/ToS/tears_of_steel_720p.mov`],
+  ['Sintel - Trailer (2010)', 'sintel', `${BLENDER}/durian/trailer/sintel_trailer-480p.mp4`],
+];
+export const EPISODES = [
+  ['Short Clips S01E01 Jellyfish', `${CLIPS}/jellyfish/mp4/h264/720/Jellyfish_720_10s_5MB.mp4`],
+  ['Short Clips S01E02 The Bunny', `${CLIPS}/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_5MB.mp4`],
+  ['Short Clips S01E03 The Dragon', `${CLIPS}/sintel/mp4/h264/720/Sintel_720_10s_5MB.mp4`],
+];
+
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const m3u = [`#EXTM3U url-tvg="${RAW}/guide.xml"`];
   for (const c of CHANNELS) {
     m3u.push(`#EXTINF:-1 tvg-id="${c.id}" tvg-logo="${RAW}/logos/${c.id}.png" group-title="${c.group}",${c.name}`, STREAM);
+  }
+  for (const [title, poster, url] of FILMS) {
+    m3u.push(`#EXTINF:-1 tvg-type="movie" tvg-logo="${RAW}/posters/${poster}.png" group-title="Open movies",${title}`, url);
+  }
+  for (const [title, url] of EPISODES) {
+    m3u.push(`#EXTINF:-1 tvg-type="series" tvg-logo="${RAW}/posters/short-clips.png" group-title="Clips",${title}`, url);
   }
   writeFileSync(path.join(here, 'playlist.m3u'), m3u.join('\n') + '\n');
 

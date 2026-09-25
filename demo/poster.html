@@ -1,0 +1,18 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@font-face { font-family: 'Sora'; src: url('../assets/fonts/sora.woff2') format('woff2'); font-weight: 100 800; }
+html,body{margin:0;background:transparent}
+.p{width:400px;height:600px;display:flex;flex-direction:column;justify-content:flex-end;padding:34px;box-sizing:border-box;
+   font-family:'Sora';color:#fff;position:relative;overflow:hidden}
+.t{font-weight:800;font-size:44px;line-height:1.02;letter-spacing:-1px}
+.s{margin-top:12px;font-weight:600;font-size:18px;opacity:.8;letter-spacing:2px;text-transform:uppercase}
+.o{position:absolute;border-radius:50%;filter:blur(2px);opacity:.35;background:#fff}
+</style></head><body><div class="p" id="p"></div><script>
+const q=Object.fromEntries(new URLSearchParams(location.hash.slice(1)));
+const p=document.getElementById('p');
+p.style.background=`radial-gradient(120% 80% at 80% 0%, ${q.a}, transparent 60%), linear-gradient(170deg, ${q.b}, #080c11)`;
+document.fonts.load('800 44px Sora').then(()=>{
+  p.innerHTML=`<div class="o" style="width:260px;height:260px;right:-60px;top:70px"></div>
+    <div class="o" style="width:120px;height:120px;left:40px;top:180px;opacity:.18"></div>
+    <div class="t">${q.t}</div><div class="s">${q.s}</div>`;
+});
+</script></body></html>
