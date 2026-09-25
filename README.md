@@ -12,9 +12,8 @@ There are two parts:
 - **The Android app**, for Google TV, Chromecast with Google TV, Android TV boxes and Android
   phones. It pairs with your server, or works on its own with a playlist on the device.
 
-The Android app is on the [releases page](../../releases); the newest APK is always at
-`https://github.com/QuadNL/CasaZapp-TV-release/releases/latest/download/casazapp-tv.apk`.
-The server image is `ghcr.io/quadnl/casazapp-tv`, tagged per version.
+The server image (`ghcr.io/quadnl/casazapp-tv`) and the Android app will be published on the
+[releases page](../../releases). Until then this repository holds the documentation.
 
 ## What it does
 
@@ -22,8 +21,8 @@ The server image is `ghcr.io/quadnl/casazapp-tv`, tagged per version.
   channels and programmes.
 - Films and series from Xtream providers, with "continue watching" and a watchlist.
 - Pause live TV and pick up where you left off; record a programme or a set time on the server.
-- Profiles for everyone at home, each with their own history, "continue watching" and
-  watchlist, a PIN if you want one, and limits for the kids. Favourites are shared.
+- Profiles for everyone at home, each with their own favourites, lists, history, "continue
+  watching" and watchlist, a PIN if you want one, and limits for the kids.
 - One player on every screen: the web app, a phone held upright or on its side, and the TV with
   its remote.
 - Knows how many connections your provider allows. When all are in use it asks before taking one
