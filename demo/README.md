@@ -1,6 +1,6 @@
 # Demo playlist
 
-Made-up channels to try CasaZapp TV without a subscription of your own, and for the screenshots on
+Fictional channels to try CasaZapp TV without a subscription of your own, and for the screenshots on
 the site. Every channel plays the same public test video (Big Buck Bunny, from Mux's test streams);
 the guide and the logos are made up.
 
