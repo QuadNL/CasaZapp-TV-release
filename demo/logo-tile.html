@@ -1,0 +1,16 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@font-face { font-family: 'Sora'; src: url('../site/assets/fonts/sora.woff2') format('woff2'); font-weight: 100 800; }
+html,body{margin:0;background:transparent}
+.t{width:256px;height:256px;border-radius:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+   font-family:'Sora';font-weight:800;color:#fff;text-align:center;line-height:1}
+.a{font-size:52px;letter-spacing:-1px}.b{font-size:96px;margin-top:4px}
+</style></head><body><div class="t" id="t"></div><script>
+const p=Object.fromEntries(new URLSearchParams(location.hash.slice(1)));
+const t=document.getElementById('t'); t.style.background=`linear-gradient(145deg, ${p.color}, ${p.color}cc)`;
+const [word,num]=p.name.split(' ');
+document.fonts.load('800 52px Sora').then(()=>{
+  t.innerHTML = num ? `<span class="a">${word.toUpperCase()}</span><span class="b">${num}</span>`
+                    : `<span class="a" style="font-size:${word.length>6?38:word.length>5?44:56}px">${word.toUpperCase()}</span>`;
+  document.title='ready';
+});
+</script></body></html>

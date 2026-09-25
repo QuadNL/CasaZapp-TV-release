@@ -1,0 +1,25 @@
+#EXTM3U url-tvg="https://raw.githubusercontent.com/QuadNL/CasaZapp-TV-release/main/demo/guide.xml"
+#EXTINF:-1 tvg-id="news1" tvg-logo="https://raw.githubusercontent.com/QuadNL/CasaZapp-TV-release/main/demo/logos/news1.png" group-title="News",News 1
+https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8
+#EXTINF:-1 tvg-id="news2" tvg-logo="https://raw.githubusercontent.com/QuadNL/CasaZapp-TV-release/main/demo/logos/news2.png" group-title="News",News 2
+https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8
+#EXTINF:-1 tvg-id="sport1" tvg-logo="https://raw.githubusercontent.com/QuadNL/CasaZapp-TV-release/main/demo/logos/sport1.png" group-title="Sport",Sport 1
+https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8
+#EXTINF:-1 tvg-id="sport2" tvg-logo="https://raw.githubusercontent.com/QuadNL/CasaZapp-TV-release/main/demo/logos/sport2.png" group-title="Sport",Sport 2
+https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8
+#EXTINF:-1 tvg-id="kids" tvg-logo="https://raw.githubusercontent.com/QuadNL/CasaZapp-TV-release/main/demo/logos/kids.png" group-title="Kids",Kids
+https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8
+#EXTINF:-1 tvg-id="cartoon" tvg-logo="https://raw.githubusercontent.com/QuadNL/CasaZapp-TV-release/main/demo/logos/cartoon.png" group-title="Kids",Cartoon
+https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8
+#EXTINF:-1 tvg-id="music" tvg-logo="https://raw.githubusercontent.com/QuadNL/CasaZapp-TV-release/main/demo/logos/music.png" group-title="Entertainment",Music
+https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8
+#EXTINF:-1 tvg-id="movies" tvg-logo="https://raw.githubusercontent.com/QuadNL/CasaZapp-TV-release/main/demo/logos/movies.png" group-title="Entertainment",Movies
+https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8
+#EXTINF:-1 tvg-id="comedy" tvg-logo="https://raw.githubusercontent.com/QuadNL/CasaZapp-TV-release/main/demo/logos/comedy.png" group-title="Entertainment",Comedy
+https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8
+#EXTINF:-1 tvg-id="nature" tvg-logo="https://raw.githubusercontent.com/QuadNL/CasaZapp-TV-release/main/demo/logos/nature.png" group-title="Documentary",Nature
+https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8
+#EXTINF:-1 tvg-id="travel" tvg-logo="https://raw.githubusercontent.com/QuadNL/CasaZapp-TV-release/main/demo/logos/travel.png" group-title="Documentary",Travel
+https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8
+#EXTINF:-1 tvg-id="weather" tvg-logo="https://raw.githubusercontent.com/QuadNL/CasaZapp-TV-release/main/demo/logos/weather.png" group-title="News",Weather
+https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8
