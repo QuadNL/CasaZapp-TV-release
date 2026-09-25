@@ -1,0 +1,109 @@
+---
+layout: default
+---
+{% assign h = site.data.home %}
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <div class="splash" aria-hidden="true">
+        <svg class="splash-mark" viewBox="0 0 32 32">
+          <rect width="32" height="32" rx="8" fill="#FFB547"/>
+          <path class="house" d="M16 6.5 6.5 14.2V25a1.5 1.5 0 0 0 1.5 1.5h16a1.5 1.5 0 0 0 1.5-1.5V14.2z" pathLength="1"/>
+          <path class="play" d="M13.6 15.4v7.2l6-3.6z"/>
+        </svg>
+      </div>
+      <h1>{{ h.hero.title }}</h1>
+      <p class="lead">{{ h.hero.text }}</p>
+      <div class="cta">
+        {% for d in h.downloads %}
+          {% if d.link != "" %}
+          <a class="btn{% if d.primary %} btn-primary{% endif %}" href="{{ d.link }}">{{ d.label }}</a>
+          {% else %}
+          <span class="btn{% if d.primary %} btn-primary{% endif %} is-soon" aria-disabled="true">{{ d.label }} <small>Coming soon</small></span>
+          {% endif %}
+        {% endfor %}
+      </div>
+      <p class="note">{{ h.hero.note }}</p>
+    </div>
+    <div class="hero-shot">
+      <figure class="device tv"><div class="screen"><img src="{{ '/assets/screens/' | append: h.hero.tv | relative_url }}" alt="CasaZapp TV on a television"></div></figure>
+      <figure class="device phone"><div class="screen"><img src="{{ '/assets/screens/' | append: h.hero.phone | relative_url }}" alt="CasaZapp TV on a phone"></div></figure>
+    </div>
+  </div>
+</section>
+
+<section id="features" class="section">
+  <div class="wrap">
+    <h2>{{ h.features_title }}</h2>
+    <div class="features">
+      {% for f in h.features %}
+      <article><h3>{{ f.title }}</h3><p>{{ f.text }}</p></article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section id="screens" class="section alt">
+  <div class="wrap">
+    <h2>{{ h.screens_title }}</h2>
+    <p class="sub">{{ h.screens_text }}</p>
+    <div class="tabs" role="tablist">
+      {% for s in h.screens %}
+      <button role="tab" aria-selected="{% if forloop.first %}true{% else %}false{% endif %}" data-tab="{{ forloop.index }}">{{ s.tab }}</button>
+      {% endfor %}
+    </div>
+    {% for s in h.screens %}
+    <div class="gallery gallery-{{ s.shape }}" data-panel="{{ forloop.index }}" {% unless forloop.first %}hidden{% endunless %}>
+      {% for shot in s.shots %}
+      <figure>
+        <div class="shot {{ s.shape }}"><img loading="lazy" src="{{ '/assets/screens/' | append: shot.image | relative_url }}" alt="{{ shot.caption }}"></div>
+        <figcaption>{{ shot.caption }}</figcaption>
+      </figure>
+      {% endfor %}
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<section id="how" class="section">
+  <div class="wrap">
+    <h2>{{ h.steps_title }}</h2>
+    <ol class="steps">
+      {% for s in h.steps %}
+      <li><span class="num">{{ forloop.index }}</span><h3>{{ s.title }}</h3><p>{{ s.text }}</p></li>
+      {% endfor %}
+    </ol>
+  </div>
+</section>
+
+<section id="install" class="section alt">
+  <div class="wrap install">
+    <div>
+      <h2>{{ h.install_title }}</h2>
+      <p>{{ h.install_text }}</p>
+      <p>
+        <a class="more" href="{{ '/docs/server.html' | relative_url }}">Server guide →</a><br>
+        <a class="more" href="{{ '/docs/android.html' | relative_url }}">Android app guide →</a>
+      </p>
+    </div>
+<pre><code>{% include_relative docker-compose.yml %}</code></pre>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap faq">
+    <h2>{{ h.faq_title }}</h2>
+    {% for f in h.faq %}
+    <details><summary>{{ f.q }}</summary><p>{{ f.a }}</p></details>
+    {% endfor %}
+  </div>
+</section>
+
+<script>
+  // The screen tabs: TV, phone, tablet, web.
+  const tabs = document.querySelectorAll('[data-tab]');
+  tabs.forEach((tab) => tab.addEventListener('click', () => {
+    tabs.forEach((t) => t.setAttribute('aria-selected', String(t === tab)));
+    document.querySelectorAll('[data-panel]').forEach((p) => { p.hidden = p.dataset.panel !== tab.dataset.tab; });
+  }));
+</script>

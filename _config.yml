@@ -1,0 +1,32 @@
+# The site on GitHub Pages: https://quadnl.github.io/CasaZapp-TV-release
+title: CasaZapp TV
+description: Your own TV player, on your own server.
+url: https://quadnl.github.io
+baseurl: /CasaZapp-TV-release
+repo: https://github.com/QuadNL/CasaZapp-TV-release
+
+markdown: kramdown
+# Links between the guides (server.md) become links between pages (server.html).
+relative_links:
+  enabled: true
+
+# The guides and the changelog get the page with the side menu.
+defaults:
+  - scope:
+      path: docs
+    values:
+      layout: doc
+  - scope:
+      path: demo
+    values:
+      layout: doc
+  - scope:
+      path: CHANGELOG.md
+    values:
+      layout: doc
+
+# The repository's own README stays on GitHub; the site has its own home page.
+exclude:
+  - README.md
+  - demo/make-demo.mjs
+  - demo/logo-tile.html

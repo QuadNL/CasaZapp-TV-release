@@ -1,0 +1,104 @@
+# The texts of the home page. Change a line, commit, and the site follows in about a minute.
+# Keep the indentation (two spaces) and the dashes; text with a colon in it goes between quotes.
+
+hero:
+  title: Your own TV player,<br>on your own server.
+  text: >-
+    CasaZapp TV plays the IPTV subscription you already have. It runs at home, so your channel
+    lists, favourites, recordings and history stay with you — on the TV, the phone and in the
+    browser.
+  note: Free to use at home. Bring your own playlist — CasaZapp TV comes without channels.
+  # The pictures beside the title, from assets/screens.
+  tv: tv-home.png
+  phone: phone-player.png
+
+# The download buttons. Leave "link" empty to show "Coming soon".
+downloads:
+  - label: Android app
+    link: ""
+    primary: true
+  - label: Docker image
+    link: ""
+
+features_title: Everything a TV at home needs
+features:
+  - title: Live TV with a guide
+    text: Zap with the remote, see what's on now and next, search channels and programmes across the whole guide.
+  - title: Films and series
+    text: Browse what your provider offers, continue where you stopped on any screen, keep a watchlist.
+  - title: Pause and record
+    text: Pause live TV and pick it up later. Record a programme from the guide, or a set time; it plays back without a provider connection.
+  - title: Profiles
+    text: Everyone at home gets their own favourites, lists, history and watchlist, with a PIN if you like and limits for the kids.
+  - title: Knows your connections
+    text: Your provider allows a number of streams. CasaZapp TV counts them, asks before taking one over, and shows who's watching what.
+  - title: Works without the server too
+    text: The Android app can also run on its own, with a playlist on the device. Handy on the road.
+
+screens_title: One player on every screen
+screens_text: The same look and the same buttons on the TV, the phone, the tablet and the web.
+# Each tab with its pictures (from assets/screens) and a line under each.
+screens:
+  - tab: TV
+    shape: wide
+    shots:
+      - image: tv-home.png
+        caption: "Home: continue watching, favourites, recently watched."
+      - image: tv-guide.png
+        caption: The guide, with search.
+      - image: tv-player.png
+        caption: The player and its controls.
+      - image: tv-movies.png
+        caption: Films and series from your provider (blurred here).
+  - tab: Phone
+    shape: tall
+    shots:
+      - image: phone-home.png
+        caption: Home.
+      - image: phone-player.png
+        caption: The player, upright.
+      - image: phone-films.png
+        caption: Films and series (blurred here).
+  - tab: Tablet
+    shape: wide
+    shots:
+      - image: tablet-home.png
+        caption: Home on a tablet.
+      - image: tablet-guide.png
+        caption: The guide.
+  - tab: Web
+    shape: wide
+    shots:
+      - image: web-home.png
+        caption: The web app, installable as an app.
+      - image: web-guide.png
+        caption: The guide in the browser.
+
+steps_title: How it works
+steps:
+  - title: Run the server
+    text: One Docker container on a NAS, a small Linux box or a Raspberry Pi. It keeps your playlists, fetches the guide and records.
+  - title: Add your playlist
+    text: Sign in from a browser and add your Xtream or M3U playlist. Pick the channels and categories you want.
+  - title: Pair your screens
+    text: Install the app on your Google TV or Android phone and pair it with a code. Or just use the web app.
+
+install_title: Install
+install_text: >-
+  The server is a single docker-compose.yml. Recordings and the pause buffer get folders of their
+  own, so a full disk never takes the database down.
+
+faq_title: Questions
+faq:
+  - q: Does it come with channels?
+    a: No. CasaZapp TV is a player. You add a playlist from a provider you pay for, or from a legal free source.
+  - q: Can I try it without a subscription?
+    a: Yes. Add the demo playlist from this repository (demo/playlist.m3u) — made-up channels with a test video and a guide.
+  - q: Which devices does the app run on?
+    a: Google TV, Chromecast with Google TV, Android TV boxes, and Android phones and tablets. Everything else uses the web app in the browser.
+  - q: Does my stream go through the server?
+    a: By default the server passes the stream on, which works everywhere. The app can also play straight from the provider, so the stream skips your server.
+  - q: Is it open source?
+    a: No. The app and the server are free to use at home; the source code is not public.
+
+footer: Comes without any channels or content.

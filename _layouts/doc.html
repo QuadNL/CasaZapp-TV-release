@@ -1,0 +1,17 @@
+---
+layout: default
+---
+<div class="wrap doc">
+  <nav class="doc-nav" aria-label="Guides">
+    <p class="doc-nav-title">Guides</p>
+    <a href="{{ '/docs/server.html' | relative_url }}" {% if page.url == '/docs/server.html' %}aria-current="page"{% endif %}>Installing the server</a>
+    <a href="{{ '/docs/android.html' | relative_url }}" {% if page.url == '/docs/android.html' %}aria-current="page"{% endif %}>The Android app</a>
+    <a href="{{ '/docs/faq.html' | relative_url }}" {% if page.url == '/docs/faq.html' %}aria-current="page"{% endif %}>Questions</a>
+    <a href="{{ '/demo/' | relative_url }}" {% if page.url == '/demo/' %}aria-current="page"{% endif %}>Demo playlist</a>
+    <a href="{{ '/CHANGELOG.html' | relative_url }}" {% if page.url == '/CHANGELOG.html' %}aria-current="page"{% endif %}>Changelog</a>
+  </nav>
+  <article class="prose">
+    {{ content }}
+    <p class="edit"><a href="{{ site.repo }}/edit/main/{{ page.path }}">Improve this page on GitHub</a></p>
+  </article>
+</div>

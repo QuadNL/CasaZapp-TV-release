@@ -6,7 +6,7 @@ tablets. It needs Android 6 or newer. The app picks the TV or phone layout by it
 ## Installing
 
 The app isn't in the Play Store (yet), so it's installed from the APK on the
-[releases page](../../../releases).
+[releases page](https://github.com/QuadNL/CasaZapp-TV-release/releases).
 
 **On a phone:** open the releases page on the phone, download `casazapp-tv.apk` and open it.
 Android asks once whether your browser may install apps; allow it.

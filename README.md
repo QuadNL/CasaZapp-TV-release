@@ -55,3 +55,13 @@ Open an [issue](../../issues/new/choose). Say which version of the server and th
 
 This is where CasaZapp TV is released. The source code is not public. The app and the server are
 free to use at home.
+
+## The website
+
+This repository is also the site at https://quadnl.github.io/CasaZapp-TV-release. To change it:
+
+- The texts of the home page are in `_data/home.yml`.
+- The guides are the files in `docs/`; they show on the site as they are.
+- Screenshots are in `assets/screens/`; a new file with the same name replaces the old one.
+
+Edit a file on GitHub (the pencil), commit, and the site follows in about a minute.
