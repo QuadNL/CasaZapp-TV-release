@@ -53,7 +53,7 @@ code { font-family: ui-monospace, Consolas, monospace; font-size: 0.9em; }
 @media (max-width: 560px) { .links a:nth-child(-n+2) { display: none; } }
 
 /* Hero */
-.hero { padding: 72px 0 56px; background: radial-gradient(60% 70% at 75% 30%, #1e3a5f55, transparent 70%); }
+.hero { overflow-x: clip; padding: 72px 0 56px; background: radial-gradient(60% 70% at 75% 30%, #1e3a5f55, transparent 70%); }
 .hero-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 48px; align-items: center; }
 .hero-grid > *, .install > *, .gallery > * { min-width: 0; }
 @media (max-width: 900px) { .hero-grid { grid-template-columns: 1fr; } }
