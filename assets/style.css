@@ -72,18 +72,18 @@ code { font-family: ui-monospace, Consolas, monospace; font-size: 0.9em; }
 .is-soon { cursor: default; opacity: 0.75; }
 
 /* The logo as the app opens: the house draws itself, then the play button (same timing). */
-.splash-mark { width: 88px; height: 88px; animation: pop 0.5s cubic-bezier(0.4, 0, 0.2, 1) both; }
-.splash .house {
+.hero-mark { width: 88px; height: 88px; animation: pop 0.5s cubic-bezier(0.4, 0, 0.2, 1) both; }
+.hero-logo .house {
   fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linejoin: round; stroke-linecap: round;
   stroke-dasharray: 1 2; stroke-dashoffset: 1;
   animation: draw 0.7s 0.15s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
-.splash .play { fill: var(--ink); opacity: 0; animation: fade 0.35s 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+.hero-logo .play { fill: var(--ink); opacity: 0; animation: fade 0.35s 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
 @keyframes pop { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 @keyframes draw { to { stroke-dashoffset: 0; } }
 @keyframes fade { to { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) {
-  .splash-mark, .splash .house, .splash .play { animation: none; stroke-dashoffset: 0; opacity: 1; }
+  .hero-mark, .hero-logo .house, .hero-logo .play { animation: none; stroke-dashoffset: 0; opacity: 1; }
 }
 
 /* Devices in the hero */
