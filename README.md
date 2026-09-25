@@ -51,17 +51,18 @@ moves on its own for fixes. What changed is in the [changelog](CHANGELOG.md).
 Open an [issue](../../issues/new/choose). Say which version of the server and the app you run
 (both are under Settings → About) and what you did just before it went wrong.
 
-## About this repository
+## Disclaimer
+CasaZapp TV is a generic media player application designed to play user-provided content. CasaZapp TV does not provide, distribute, store, or own any media, streams, channels, or playlists.
 
-This is where CasaZapp TV is released. The source code is not public. The app and the server are
-free to use at home.
+Users must supply their own content via legal streaming links, URLs, or playlists. CasaZapp TV is not affiliated with any content provider, third-party IPTV service, or broadcaster, and does not endorse or condone the streaming of copyrighted material without proper authorization.
 
-## The website
+The user assumes full responsibility for all content played through the CasaZapp TV application.
 
-This repository is also the site at https://quadnl.github.io/CasaZapp-TV-release. To change it:
+## Support the project
 
-- The texts of the home page are in `_data/home.yml`.
-- The guides are the files in `docs/`; they show on the site as they are.
-- Screenshots are in `assets/screens/`; a new file with the same name replaces the old one.
+If you enjoy using the app, please consider to buy me a coffee.
 
-Edit a file on GitHub (the pencil), commit, and the site follows in about a minute.
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/U2W120MCVZ)
+
+[ko_fi_shield]: https://img.shields.io/static/v1.svg?label=%20&message=Ko-Fi&color=F16061&logo=ko-fi&logoColor=white
+[ko_fi]: https://ko-fi.com/U2W120MCVZ
