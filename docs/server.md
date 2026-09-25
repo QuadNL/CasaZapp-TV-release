@@ -14,7 +14,7 @@ Linux box, a Proxmox LXC, a Raspberry Pi 4 or newer (64-bit).
 The container uses three folders. Give each its own mount, so a full recordings disk can't take
 the database down with it.
 
-| In the container | What goes there                                   | Back it up? |
+| In the container | Contents                                   | Back it up? |
 | ---------------- | ------------------------------------------------- | ----------- |
 | `/data`          | Database, encryption key, channel logos           | Yes         |
 | `/recordings`    | Recordings                                        | If you like |
