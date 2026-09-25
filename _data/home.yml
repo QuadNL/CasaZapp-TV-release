@@ -82,6 +82,50 @@ steps:
   - title: Pair your screens
     text: Install the app on your Google TV or Android phone and pair it with a code. Or just use the web app.
 
+compare_title: With or without a server
+compare_text: The Android app also works on its own, with a playlist on the device. A server adds the rest.
+# Each row: what, then without a server and with one. "yes", "no", or a short text.
+compare:
+  - what: Live TV, films and series
+    app: "yes"
+    server: "yes"
+  - what: Guide
+    app: Xtream only
+    server: Xtream and M3U
+  - what: Favourites
+    app: This device only
+    server: On all your screens
+  - what: Continue watching and watchlist
+    app: This device only
+    server: On all your screens
+  - what: Own channel lists
+    app: "no"
+    server: "yes"
+  - what: Choose, order and fix channels and logos
+    app: "no"
+    server: "yes"
+  - what: Search the whole guide
+    app: "no"
+    server: "yes"
+  - what: Pause live TV and record
+    app: "no"
+    server: "yes"
+  - what: Profiles with a PIN and limits
+    app: "no"
+    server: "yes"
+  - what: Keeps track of your provider's connections
+    app: "no"
+    server: "yes"
+  - what: See and stop what's playing on other screens
+    app: "no"
+    server: "yes"
+  - what: Provider login kept in one place
+    app: On every device
+    server: On your server
+  - what: Web app in the browser
+    app: "no"
+    server: "yes"
+
 install_title: Install
 install_text: >-
   The server is a single docker-compose.yml. Just make sure you have enough space available for recordings.

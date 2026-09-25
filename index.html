@@ -74,6 +74,28 @@ layout: default
   </div>
 </section>
 
+<section id="compare" class="section">
+  <div class="wrap">
+    <h2>{{ h.compare_title }}</h2>
+    <p class="sub">{{ h.compare_text }}</p>
+    <div class="compare-wrap">
+      <table class="compare">
+        <thead><tr><th></th><th>App without a server</th><th>With a server</th></tr></thead>
+        <tbody>
+          {% for r in h.compare %}
+          <tr>
+            <td>{{ r.what }}</td>
+            {% for v in (1..2) %}{% if v == 1 %}{% assign cell = r.app %}{% else %}{% assign cell = r.server %}{% endif %}
+            <td>{% if cell == "yes" %}<span class="yes" aria-label="Yes">✓</span>{% elsif cell == "no" %}<span class="no" aria-label="No">–</span>{% else %}<span class="part">{{ cell }}</span>{% endif %}</td>
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
 <section id="install" class="section alt">
   <div class="wrap install">
     <div>

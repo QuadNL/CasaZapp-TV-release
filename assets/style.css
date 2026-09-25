@@ -243,3 +243,14 @@ figcaption { color: var(--muted); font-size: 0.9rem; margin-top: 10px; }
   font: 600 0.8rem 'Figtree', sans-serif; cursor: pointer; opacity: 0.85; }
 .copy:hover { color: var(--text); opacity: 1; }
 .copy.done { color: var(--accent); }
+
+/* With or without a server. */
+.compare-wrap { overflow-x: auto; margin-top: 8px; }
+.compare { width: 100%; max-width: 860px; border-collapse: collapse; font-size: 0.97rem; }
+.compare th, .compare td { padding: 12px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+.compare th { color: var(--muted); font-weight: 600; font-size: 0.85rem; letter-spacing: 0.04em; text-transform: uppercase; }
+.compare td:first-child { color: var(--text); }
+.compare td:not(:first-child) { width: 26%; }
+.compare .yes { color: #3dd68c; font-weight: 800; font-size: 1.1rem; }
+.compare .no { color: var(--muted); }
+.compare .part { color: #c3ccd8; font-size: 0.92rem; }
