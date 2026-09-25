@@ -1,7 +1,5 @@
 # Changelog
 
-Server and app share the first two numbers of the version. Server 0.4.x works with app 0.4.x.
-
 ## 0.4.1 (September 2026)
 
 ### Profiles
