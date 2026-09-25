@@ -4,10 +4,10 @@
 hero:
   title: Your own TV player,<br>on your own server.
   text: >-
-    CasaZapp TV plays the IPTV subscription you already have. It runs at home, so your channel
-    lists, favourites, recordings and history stay with you — on the TV, the phone and in the
-    browser.
-  note: Free to use at home. Bring your own playlist — CasaZapp TV comes without channels.
+    CasaZapp TV gives you the best settopbox experience you want. It runs on docker, so your
+channel lists, favourites, recordings and watch history stay with you in sync across all your devices.
+
+  note: Free without any ads. 
   # The picture beside the title (a TV and a phone), in assets.
   image: hero.png
 
@@ -48,7 +48,7 @@ screens:
       - image: tv-player.png
         caption: The player and its controls.
       - image: tv-movies.png
-        caption: Films and series from your provider (blurred here).
+        caption: Films and series.
   - tab: Phone
     shape: tall
     shots:
@@ -57,7 +57,7 @@ screens:
       - image: phone-player.png
         caption: The player, upright.
       - image: phone-films.png
-        caption: Films and series (blurred here).
+        caption: Films and series.
   - tab: Tablet
     shape: wide
     shots:
