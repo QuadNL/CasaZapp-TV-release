@@ -26,8 +26,7 @@ layout: default
       <p class="note">{{ h.hero.note }}</p>
     </div>
     <div class="hero-shot">
-      <figure class="device tv"><div class="screen"><img src="{{ '/assets/screens/' | append: h.hero.tv | relative_url }}" alt="CasaZapp TV on a television"></div></figure>
-      <figure class="device phone"><div class="screen"><img src="{{ '/assets/screens/' | append: h.hero.phone | relative_url }}" alt="CasaZapp TV on a phone"></div></figure>
+      <img src="{{ '/assets/' | append: h.hero.image | relative_url }}" alt="CasaZapp TV on a television and a phone" width="2294" height="1474">
     </div>
   </div>
 </section>
@@ -59,7 +58,6 @@ layout: default
         <button class="stage-shot {{ s.shape }}" type="button" aria-label="Show full size">
           <img src="{{ '/assets/screens/' | append: first.image | relative_url }}" alt="{{ first.caption }}">
         </button>
-        <figcaption>{{ first.caption }}</figcaption>
       </figure>
       <div class="thumbs">
         {% for shot in s.shots %}
@@ -114,18 +112,34 @@ layout: default
 </dialog>
 
 <script>
-  // A thumbnail shows its shot large; the large shot opens at full size.
-  document.querySelectorAll('.viewer').forEach((viewer) => {
+  // A thumbnail shows its shot large; every 5 seconds the next one of the open tab comes up by
+  // itself, from the start again after a click. The large shot opens at full size.
+  const show = (viewer, thumb) => {
+    viewer.querySelectorAll('.thumb').forEach((t) => t.setAttribute('aria-pressed', String(t === thumb)));
     const stage = viewer.querySelector('.stage img');
-    const caption = viewer.querySelector('.stage figcaption');
+    stage.src = thumb.dataset.src;
+    stage.alt = thumb.dataset.caption;
+  };
+  let timer;
+  const cycle = () => {
+    clearInterval(timer);
+    timer = setInterval(() => {
+      const viewer = document.querySelector('.viewer:not([hidden])');
+      if (!viewer || document.querySelector('.zoom').open) return;
+      const thumbs = [...viewer.querySelectorAll('.thumb')];
+      const now = thumbs.findIndex((t) => t.getAttribute('aria-pressed') === 'true');
+      show(viewer, thumbs[(now + 1) % thumbs.length]);
+    }, 5000);
+  };
+  document.querySelectorAll('.viewer').forEach((viewer) => {
     viewer.querySelectorAll('.thumb').forEach((thumb) => thumb.addEventListener('click', () => {
-      viewer.querySelectorAll('.thumb').forEach((t) => t.setAttribute('aria-pressed', String(t === thumb)));
-      stage.src = thumb.dataset.src;
-      stage.alt = caption.textContent = thumb.dataset.caption;
+      show(viewer, thumb);
+      cycle();
     }));
   });
+  cycle();
   const zoom = document.querySelector('.zoom');
-  document.querySelectorAll('.stage-shot, .device .screen').forEach((el) => el.addEventListener('click', () => {
+  document.querySelectorAll('.stage-shot').forEach((el) => el.addEventListener('click', () => {
     zoom.querySelector('img').src = el.querySelector('img').src;
     zoom.showModal();
   }));
@@ -136,5 +150,6 @@ layout: default
   tabs.forEach((tab) => tab.addEventListener('click', () => {
     tabs.forEach((t) => t.setAttribute('aria-selected', String(t === tab)));
     document.querySelectorAll('[data-panel]').forEach((p) => { p.hidden = p.dataset.panel !== tab.dataset.tab; });
+    cycle();
   }));
 </script>
