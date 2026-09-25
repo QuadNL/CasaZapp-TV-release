@@ -78,8 +78,7 @@
       button.className = 'copy';
       button.textContent = 'Copy';
       button.addEventListener('click', function () {
-        navigator.clipboard.writeText(pre.innerText.replace(/
-$/, '')).then(function () {
+        navigator.clipboard.writeText(pre.innerText.trim()).then(function () {
           button.textContent = 'Copied';
           button.classList.add('done');
           setTimeout(function () { button.textContent = 'Copy'; button.classList.remove('done'); }, 1500);
