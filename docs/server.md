@@ -9,6 +9,17 @@ Linux box, a Proxmox LXC, a Raspberry Pi 4 or newer (64-bit).
 - About 300 MB for the image, plus room for the database (usually well under 1 GB).
 - Room for recordings, if you use them. An hour of HD is roughly 1 to 3 GB.
 
+## The image
+
+The server is `ghcr.io/quadnl/casazapp-tv`, for `amd64` and `arm64`
+([all versions](https://github.com/users/QuadNL/packages/container/package/casazapp-tv)).
+
+| Tag       | Follows                                        |
+| --------- | ---------------------------------------------- |
+| `latest`  | The newest release                             |
+| `0.4`     | The newest release of 0.4, without a new minor |
+| `0.4.8`   | Exactly that version (any version number)      |
+
 ## Folders
 
 The container uses three folders. Give each its own mount, so a full recordings disk can't take

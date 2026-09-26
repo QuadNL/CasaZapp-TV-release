@@ -14,10 +14,10 @@ hero:
 # The download buttons. Leave "link" empty to show "Coming soon".
 downloads:
   - label: Android app
-    link: ""
+    link: "https://github.com/QuadNL/CasaZapp-TV-release/releases/latest"
     primary: true
   - label: Docker image
-    link: ""
+    link: "https://quadnl.github.io/CasaZapp-TV-release/docs/server.html"
 
 features_title: Everything a TV at home needs
 features:

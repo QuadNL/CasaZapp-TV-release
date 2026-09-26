@@ -14,8 +14,14 @@ There are two parts:
 - **The Android app**, for Google TV, Chromecast with Google TV, Android TV boxes and Android
   phones. It pairs with your server, or works on its own with a playlist on the device.
 
-The server image (`ghcr.io/quadnl/casazapp-tv`) and the Android app will be published on the
-[releases page](../../releases). Until then this repository holds the documentation.
+Everything you need is here:
+
+- **Server:** the Docker image `ghcr.io/quadnl/casazapp-tv`, under
+  [Packages](https://github.com/users/QuadNL/packages/container/package/casazapp-tv).
+  [Installing the server](docs/server.md) shows how to run it.
+- **Android app:** `casazapp-tv.apk` on the [releases page](../../releases/latest).
+  [The Android app](docs/android.md) shows how to install it.
+- **Website:** [quadnl.github.io/CasaZapp-TV-release](https://quadnl.github.io/CasaZapp-TV-release).
 
 ## What it does
 
