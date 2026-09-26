@@ -143,4 +143,8 @@ faq:
   - q: Is it open source?
     a: No. The app and the server are free to use at home; the source code is not public.
 
+support_title: Support the project
+support_text: If you enjoy using the app, consider buying me a coffee.
+support_link: https://ko-fi.com/U2W120MCVZ
+
 footer: ©2026 - QuadNL

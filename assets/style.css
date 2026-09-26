@@ -145,6 +145,7 @@ figcaption { color: var(--muted); font-size: 0.9rem; margin-top: 10px; }
 .more { color: var(--accent); text-decoration: none; font-weight: 600; }
 
 .faq { max-width: 760px; }
+.support img { display: block; }
 .faq details { border-bottom: 1px solid var(--line); padding: 16px 0; }
 .faq summary { cursor: pointer; font-weight: 600; font-size: 1.05rem; }
 .faq details p { color: #b6c0cd; margin: 10px 0 0; }
