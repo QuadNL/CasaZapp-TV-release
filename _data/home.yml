@@ -141,8 +141,8 @@ faq:
   - q: Does my stream go through the server?
     a: By default the server passes the stream on, which works everywhere. The app can also play straight from the provider, so the stream skips your server.
   - q: Is it open source?
-    a: No. The app and the server are free to use at home; the source code is not public.
-
+    a: Not at this moment. 
+    
 support_title: Support the project
 support_text: If you enjoy using the app, consider buying me a coffee.
 support_link: https://ko-fi.com/U2W120MCVZ
