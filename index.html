@@ -125,7 +125,7 @@ layout: default
       const now = slides.findIndex((s) => s.classList.contains('is-on'));
       slides[now]?.classList.remove('is-on');
       slides[(now + 1) % slides.length].classList.add('is-on');
-    }, 3000);
+    }, 4000);
   };
   cycle();
 
