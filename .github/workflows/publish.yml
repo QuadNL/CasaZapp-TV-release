@@ -1,0 +1,138 @@
+name: Publish a release
+
+# Puts a finished version of the Android app or the server image here, for everyone. Run it from
+# the Actions tab: choose what and which version.
+
+on:
+  workflow_dispatch:
+    inputs:
+      what:
+        description: What to publish
+        type: choice
+        options: [android, server]
+        required: true
+      version:
+        description: Version to publish, e.g. 0.4.10
+        type: string
+        required: true
+      notes:
+        description: Server only, optional. Release notes in English; one line per item, separated by |
+        type: string
+        required: false
+
+permissions:
+  contents: write
+  packages: write
+
+concurrency: publish
+
+jobs:
+  android:
+    name: Android app ${{ inputs.version }}
+    if: inputs.what == 'android'
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ inputs.version }}
+      DEV: QuadNL/CasaZapp-tv-android
+    steps:
+      - name: Check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then echo "::error::Version like 0.4.10"; exit 1; fi
+          if gh release view "android-v$VERSION" -R "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            echo "::error::Android app $VERSION is already published"; exit 1
+          fi
+      - name: Fetch the build
+        env:
+          GH_TOKEN: ${{ secrets.DEV_READ_TOKEN }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then echo "::error::Secret DEV_READ_TOKEN is missing"; exit 1; fi
+          gh release download "v$VERSION" -R "$DEV" -D out
+      - name: Notes of every version since the last published one
+        # The app shows release-notes.json in its update pop-up, so it lists everything that changed
+        # since the version people have now, not only the last development version.
+        env:
+          GH_TOKEN: ${{ secrets.DEV_READ_TOKEN }}
+          GH_PUBLIC: ${{ github.token }}
+        run: |
+          LAST=$(GH_TOKEN=$GH_PUBLIC gh release list -R "$GITHUB_REPOSITORY" --limit 1000 --json tagName \
+            --jq '.[].tagName | select(startswith("android-v")) | ltrimstr("android-v")' | sort -V | tail -1)
+          echo "Last published: ${LAST:-none}"
+          gh release list -R "$DEV" --limit 1000 --json tagName --jq '.[].tagName | ltrimstr("v")' | sort -V > all.txt
+          mkdir notes
+          while read -r v; do
+            if [ -n "$LAST" ] && [ "$(printf '%s\n%s\n' "$v" "$LAST" | sort -V | tail -1)" = "$LAST" ]; then continue; fi
+            if [ "$(printf '%s\n%s\n' "$v" "$VERSION" | sort -V | tail -1)" != "$VERSION" ]; then continue; fi
+            gh release download "v$v" -R "$DEV" -p release-notes.json -O "notes/$v.json" || true
+          done < all.txt
+          if [ -z "$(ls notes)" ]; then echo "::error::No release notes found for $VERSION"; exit 1; fi
+          ls notes
+          # Newest first, as the pop-up reads.
+          FILES=$(ls notes/*.json | sort -V -r)
+          jq -s '{
+            nl: {new: (map(.nl.new) | add), fixes: (map(.nl.fixes) | add)},
+            en: {new: (map(.en.new) | add), fixes: (map(.en.fixes) | add)}
+          }' $FILES > out/release-notes.json
+          cat out/release-notes.json
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          BODY=$(jq -r '(if (.en.new | length) > 0 then "## New\n" + (.en.new | map("- " + .) | join("\n")) + "\n\n" else "" end)
+            + (if (.en.fixes | length) > 0 then "## Fixed\n" + (.en.fixes | map("- " + .) | join("\n")) else "" end)' out/release-notes.json)
+          gh release create "android-v$VERSION" out/casazapp-tv.apk out/version.txt out/release-notes.json \
+            -R "$GITHUB_REPOSITORY" \
+            --title "Android app $VERSION" \
+            --notes "$BODY" \
+            --latest
+
+  server:
+    name: Server image ${{ inputs.version }}
+    if: inputs.what == 'server'
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ inputs.version }}
+      NOTES: ${{ inputs.notes }}
+      SOURCE: ghcr.io/quadnl/casazapp-tv
+      TARGET: ghcr.io/quadnl/casazapp-tv-release
+    steps:
+      - name: Check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then echo "::error::Version like 0.4.8"; exit 1; fi
+          if gh release view "server-v$VERSION" -R "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            echo "::error::Server $VERSION is already published"; exit 1
+          fi
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+      - name: Copy the image
+        # Both platforms, unchanged; only the name and tags are new.
+        run: |
+          docker buildx imagetools create \
+            -t "$TARGET:$VERSION" -t "$TARGET:${VERSION%.*}" -t "$TARGET:latest" \
+            --annotation "index:org.opencontainers.image.source=https://github.com/QuadNL/CasaZapp-TV-release" \
+            --annotation "index:org.opencontainers.image.description=CasaZapp TV server: your own TV player, on your own server." \
+            --annotation "index:org.opencontainers.image.url=https://casazapp.tv" \
+            --annotation "index:org.opencontainers.image.version=$VERSION" \
+            "$SOURCE:$VERSION"
+          docker buildx imagetools inspect "$TARGET:$VERSION"
+      - name: Release entry
+        # Not marked latest: "latest" on the releases page is the Android app the app updates from.
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          BODY="Docker image \`$TARGET:$VERSION\` (also \`${VERSION%.*}\` and \`latest\`)."
+          if [ -n "$NOTES" ]; then
+            BODY="$BODY"$'\n\n'"$(printf '%s' "$NOTES" | tr '|' '\n' | sed 's/^ *//; /^$/d; s/^/- /')"
+          fi
+          BODY="$BODY"$'\n\n'"See [Installing the server](https://casazapp.tv/docs/server.html) and \`docker compose pull\` to update."
+          gh release create "server-v$VERSION" -R "$GITHUB_REPOSITORY" \
+            --title "Server $VERSION" \
+            --notes "$BODY" \
+            --latest=false

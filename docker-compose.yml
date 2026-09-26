@@ -1,7 +1,7 @@
 # CasaZapp TV server. See docs/server.md for what each line does.
 services:
   casazapp-tv:
-    image: ghcr.io/quadnl/casazapp-tv:latest
+    image: ghcr.io/quadnl/casazapp-tv-release:latest
     container_name: casazapp-tv
     ports:
       - "8080:8080"

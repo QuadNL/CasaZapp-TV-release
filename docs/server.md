@@ -11,8 +11,8 @@ Linux box, a Proxmox LXC, a Raspberry Pi 4 or newer (64-bit).
 
 ## The image
 
-The server is `ghcr.io/quadnl/casazapp-tv`, for `amd64` and `arm64`
-([all versions](https://github.com/users/QuadNL/packages/container/package/casazapp-tv)).
+The server is `ghcr.io/quadnl/casazapp-tv-release`, for `amd64` and `arm64`
+([all versions](https://github.com/QuadNL/CasaZapp-TV-release/pkgs/container/casazapp-tv-release)).
 
 | Tag       | Follows                                        |
 | --------- | ---------------------------------------------- |
@@ -39,7 +39,7 @@ the compose file below. Without them everything lives under `/data`.
 ```yaml
 services:
   casazapp-tv:
-    image: ghcr.io/quadnl/casazapp-tv:latest
+    image: ghcr.io/quadnl/casazapp-tv-release:latest
     container_name: casazapp-tv
     ports:
       - "8080:8080"

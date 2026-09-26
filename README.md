@@ -16,8 +16,8 @@ There are two parts:
 
 Everything you need is here:
 
-- **Server:** the Docker image `ghcr.io/quadnl/casazapp-tv`, under
-  [Packages](https://github.com/users/QuadNL/packages/container/package/casazapp-tv).
+- **Server:** the Docker image `ghcr.io/quadnl/casazapp-tv-release`, under
+  [Packages](https://github.com/QuadNL/CasaZapp-TV-release/pkgs/container/casazapp-tv-release).
   [Installing the server](docs/server.md) shows how to run it.
 - **Android app:** `casazapp-tv.apk` on the [releases page](../../releases/latest).
   [The Android app](docs/android.md) shows how to install it.
