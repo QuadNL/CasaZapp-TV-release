@@ -17,7 +17,7 @@ downloads:
     link: "https://github.com/QuadNL/CasaZapp-TV-release/releases/latest"
     primary: true
   - label: Docker image
-    link: "https://quadnl.github.io/CasaZapp-TV-release/docs/server.html"
+    link: "/docs/server.html"
 
 features_title: Everything a TV at home needs
 features:

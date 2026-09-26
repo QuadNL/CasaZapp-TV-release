@@ -21,7 +21,7 @@ Everything you need is here:
   [Installing the server](docs/server.md) shows how to run it.
 - **Android app:** `casazapp-tv.apk` on the [releases page](../../releases/latest).
   [The Android app](docs/android.md) shows how to install it.
-- **Website:** [quadnl.github.io/CasaZapp-TV-release](https://quadnl.github.io/CasaZapp-TV-release).
+- **Website:** [casazapp.tv](https://casazapp.tv).
 
 ## What it does
 
