@@ -2,7 +2,9 @@
 
 # CasaZapp TV
 
-Your own TV player, on your own server.
+The best TV player, in your home.
+
+For all information and instructions visit https://casazapp.tv.
 
 CasaZapp TV gives you the best set-topbox experience you want. It runs on docker, so your
 channel lists, favourites, recordings and watch history stay with you in sync across all your devices.
