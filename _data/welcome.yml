@@ -52,5 +52,5 @@ pages:
     image: assets/welcome/07-switch-profile-screen.png
 
   - title: PIN Protection
-    text: Keep the kids out or protect your privacy by locking profiles with an optional PIN.
+    text: Locking profiles with an optional PIN.
     image: assets/welcome/08-switch-profile-pin.png
