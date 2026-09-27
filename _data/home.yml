@@ -128,18 +128,18 @@ compare:
 
 install_title: Install
 install_text: >-
-  The server is a single docker-compose.yml. Just make sure you have enough space available for recordings.
+  CasaZapp TV server is a single docker-compose.yml. Just make sure you have enough space available for recordings.
 
 faq_title: Questions
 faq:
   - q: Does it come with channels?
-    a: No. CasaZapp TV is a player. You add a playlist from a provider you pay for, or from a legal free source.
+    a: No. CasaZapp TV is a player. You need to bring your own playlist from a provider.
   - q: Can I try it without a subscription?
     a: Yes. Add the demo playlist from this repository (demo/playlist.m3u) — made-up channels with a test video and a guide.
   - q: Which devices does the app run on?
     a: Google TV, Chromecast with Google TV, Android TV boxes, and Android phones and tablets. Everything else uses the web app in the browser.
-  - q: Does my stream go through the server?
-    a: By default the server passes the stream on, which works everywhere. The app can also play straight from the provider, so the stream skips your server.
+  - q: Does my stream go through CasaZapp TV server?
+    a: By default yes, which works everywhere. The Android app can also play straight from the provider, so the stream skips your CasaZapp TV server.
   - q: Is it open source?
     a: Not at this moment. 
     
