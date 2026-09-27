@@ -98,7 +98,7 @@ compare:
   - what: Continue watching and watchlist
     app: "yes"
     server: "yes"
-  - what: Own channel lists
+  - what: Customize channel lists
     app: "no"
     server: "yes"
   - what: Choose, order and fix channels and logos
