@@ -14,4 +14,15 @@
 #   text: Open TV Channels and pick a channel. Zap with the arrow keys.
 #   image: assets/welcome/watch-1.png
 
-pages: []
+pages:
+  - title: Overview
+    text: Quick access to your live TV, movies, and series. Jump straight into your favorites or pick up right where you left off.
+    image: assets/welcome/00-homepage.png
+
+  - title: Open TV channel
+    text: Pick a channel in the guide to start watching...
+    image: assets/welcome/01-open-tv-channel.png
+
+  - title: Open TV channel
+    text: ...Or use the search to find the channel or programme.
+    image: assets/welcome/01-2-open-tv-channel-search.png    
