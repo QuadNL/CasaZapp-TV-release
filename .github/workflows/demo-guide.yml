@@ -1,0 +1,28 @@
+name: Demo guide
+
+# The demo playlist's guide covers yesterday to the day after tomorrow; move it along every night.
+
+on:
+  schedule:
+    - cron: '15 2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  guide:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: node demo/make-demo.mjs
+      - name: Commit when changed
+        run: |
+          if git diff --quiet; then echo "No change"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "Demo guide: $(date -u +%Y-%m-%d)"
+          git push
