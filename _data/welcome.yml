@@ -19,10 +19,38 @@ pages:
     text: Quick access to your live TV, movies, and series. Jump straight into your favorites or pick up right where you left off.
     image: assets/welcome/00-homepage.png
 
-  - title: Open TV channel
-    text: Pick a channel in the guide to start watching...
+  - title: Live TV & Guide
+    text: Browse the guide and pick a channel to start watching.
     image: assets/welcome/01-open-tv-channel.png
 
-  - title: Open TV channel
-    text: ...Or use the search to find the channel or programme.
-    image: assets/welcome/01-2-open-tv-channel-search.png    
+  - title: Quick Search
+    text: Know what you want? Use the search bar to find channels and shows instantly.
+    image: assets/welcome/01-2-open-tv-channel-search.png 
+    
+  - title: Record Live TV
+    text: See something good? Hit the record button directly in the player to save it to your server.
+    image: assets/welcome/02-start-recording-tv-channel.png 
+    
+  - title: Schedule Recordings
+    text: Plan ahead. Select upcoming shows in the guide to record them automatically.
+    image: assets/welcome/03-start-recording-tv-guide.png
+
+  - title: Watch Anytime
+    text: All your finished recordings are safely stored and ready to play from the sidebar.
+    image: assets/welcome/04-play-recording.png    
+
+  - title: Personal Profiles
+    text: Share your server without messing up your watch history. Add new users in the settings.
+    image: assets/welcome/05-create-profile.png
+
+  - title: Switch Users
+    text: Quickly change who is watching directly from the dashboard.
+    image: assets/welcome/06-switch-profile-option.png
+
+  - title: Own Favorites
+    text: Everyone gets their own watchlists, recent channels, and personal recommendations.
+    image: assets/welcome/07-switch-profile-screen.png
+
+  - title: PIN Protection
+    text: Keep the kids out or protect your privacy by locking profiles with an optional PIN.
+    image: assets/welcome/08-switch-profile-pin.png
