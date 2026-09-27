@@ -76,14 +76,14 @@ screens:
 steps_title: How it works
 steps:
   - title: Run the server
-    text: One Docker container on a NAS, a small Linux box or a Raspberry Pi. It keeps your playlists, fetches the guide and records.
+    text: One Docker container on a NAS, Proxmox LXC or a Raspberry Pi. It keeps your playlists, fetches the guide and records.
   - title: Add your playlist
     text: Sign in from a browser and add your Xtream or M3U playlist. Pick the channels and categories you want.
   - title: Pair your screens
-    text: Install the app on your Google TV or Android phone and pair it with a code. Or just use the web app.
+    text: Install the app on your Google TV or Android phone and pair it with a code.
 
-compare_title: With or without a server
-compare_text: The Android app also works on its own, with a playlist on the device. A server adds the rest.
+compare_title: Standalone or with CasaZapp TV server
+compare_text: The Android app also works standalone, with a playlist on the device. But running with CasaZapp TV server adds more features.
 # Each row: what, then without a server and with one. "yes", "no", or a short text.
 compare:
   - what: Live TV, films and series
