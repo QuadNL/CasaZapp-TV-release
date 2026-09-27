@@ -1,0 +1,17 @@
+# The walkthrough in the web app's welcome pop-up, shown after signing in.
+# The app adds the first page ("Welcome") and the last page ("Start using CasaZapp TV now") itself;
+# these are the pages in between, in this order. Change a line, commit, and the app follows in about
+# a minute (it reads https://casazapp.tv/welcome/pages.json).
+#
+# Each page:
+#   title: short, one line
+#   text:  one or two sentences
+#   image: a file in assets/welcome/ (e.g. assets/welcome/watch-1.png) or a full https:// address.
+#          Any size works; the pop-up shows it in a fixed 16:10 frame. 1600x1000 looks sharpest.
+#
+# Example (remove the # to use it):
+# - title: Watch a TV channel
+#   text: Open TV Channels and pick a channel. Zap with the arrow keys.
+#   image: assets/welcome/watch-1.png
+
+pages: []

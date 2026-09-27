@@ -1,0 +1,5 @@
+---
+layout: null
+permalink: /welcome/pages.json
+---
+[{% for p in site.data.welcome.pages %}{"title":{{ p.title | jsonify }},"text":{{ p.text | jsonify }},"image":{% if p.image %}{% if p.image contains "://" %}{{ p.image | jsonify }}{% else %}{{ p.image | absolute_url | jsonify }}{% endif %}{% else %}null{% endif %}}{% unless forloop.last %},{% endunless %}{% endfor %}]
