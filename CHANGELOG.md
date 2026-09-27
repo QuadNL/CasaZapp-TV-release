@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.5.0 (September 2026)
+
+Server and Android app share version 0.5.0.
+
+### Server and web app
+
+- First start opens a setup wizard: admin password and language, playlist, logo countries, apps.
+  No password in the log anymore; `ADMIN_PASSWORD` still skips it.
+- A welcome walkthrough after signing in. Turn it off in the last step or under Settings → General.
+- The web app starts in English. New installs fetch only the "international" channel logos.
+- Playlists, managing a playlist and own lists now sit inside Settings.
+- The app download points to `casazapp.tv/app`, which always serves the newest APK.
+
+### Android app
+
+- Version number in line with the server.
+
 ## 0.4.1 (September 2026)
 
 ### Profiles
