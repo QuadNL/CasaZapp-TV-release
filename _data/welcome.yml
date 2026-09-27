@@ -47,8 +47,8 @@ pages:
     text: Quickly change who is watching directly from the dashboard.
     image: assets/welcome/06-switch-profile-option.png
 
-  - title: Own Favorites
-    text: Everyone gets their own watchlists, recent channels, and personal recommendations.
+  - title: Profile Overview
+    text: Easy switch to the preferred profile.
     image: assets/welcome/07-switch-profile-screen.png
 
   - title: PIN Protection
