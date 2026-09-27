@@ -60,17 +60,17 @@ Start it:
 docker compose up -d
 ```
 
-## First sign-in
+## First start
 
-On the first start the server creates the account `admin` with a random password and prints it
-once in the log:
+Open `http://<your-server>:8080`. A new install starts a setup wizard:
 
-```bash
-docker compose logs casazapp-tv
-```
+1. Set the `admin` password (10+ characters) and the language.
+2. Add an Xtream or M3U playlist.
+3. Pick the logo countries (default: international).
+4. Get the Android app and pair it.
 
-Open `http://<your-server>:8080`, sign in, and change the password under Settings. If you'd rather
-choose the password yourself, set `ADMIN_PASSWORD` before the very first start.
+Everything after step 1 can be skipped and done later in Settings. To skip the wizard, set
+`ADMIN_PASSWORD` before the very first start.
 
 Forgot it later?
 
@@ -90,7 +90,7 @@ All of these are optional.
 | `CACHE_DIR`      | `/data`            | Where the pause buffer goes (in a `timeshift` folder)               |
 | `TRUST_PROXY`    | `false`            | `true` behind a reverse proxy, so it sees the real client and HTTPS |
 | `APP_SECRET`     | generated          | Key for the stored provider passwords (see below)                   |
-| `ADMIN_PASSWORD` | generated          | Password for `admin` on the first start only                        |
+| `ADMIN_PASSWORD` | set in the wizard  | Password for `admin` on the first start only; skips the wizard      |
 | `LOG_LEVEL`      | `info`             | `debug`, `info`, `warn` or `error`                                  |
 
 ### About APP_SECRET
