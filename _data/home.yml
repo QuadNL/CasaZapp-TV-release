@@ -90,14 +90,14 @@ compare:
     app: "yes"
     server: "yes"
   - what: Guide
-    app: Xtream only
-    server: Xtream and M3U
+    app: "yes"
+    server: "yes"
   - what: Favourites
-    app: This device only
-    server: On all your screens
+    app: "yes"
+    server: "yes"
   - what: Continue watching and watchlist
-    app: This device only
-    server: On all your screens
+    app: "yes"
+    server: "yes"
   - what: Own channel lists
     app: "no"
     server: "yes"
