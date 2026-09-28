@@ -11,6 +11,8 @@ services:
       CACHE_DIR: /cache
       # Behind a reverse proxy (Nginx Proxy Manager, Caddy, Traefik):
       # TRUST_PROXY: "true"
+      # The address you use for the server; apps that find it on the network connect there:
+      # PUBLIC_URL: https://tv.example.com
     volumes:
       - ./data:/data
       - ./recordings:/recordings

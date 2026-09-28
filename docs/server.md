@@ -14,22 +14,22 @@ Linux box, a Proxmox LXC, a Raspberry Pi 4 or newer (64-bit).
 The server is `ghcr.io/quadnl/casazapp-tv-release`, for `amd64` and `arm64`
 ([all versions](https://github.com/QuadNL/CasaZapp-TV-release/pkgs/container/casazapp-tv-release)).
 
-| Tag       | Follows                                        |
-| --------- | ---------------------------------------------- |
-| `latest`  | The newest release                             |
-| `0.4`     | The newest release of 0.4, without a new minor |
-| `0.4.11`  | Exactly that version (any version number)      |
+| Tag      | Follows                                    |
+| -------- | ------------------------------------------ |
+| `latest` | The newest release                         |
+| `0.5`    | The newest 0.5 release, not the next minor |
+| `0.5.1`  | Exactly that version                       |
 
 ## Folders
 
 The container uses three folders. Give each its own mount, so a full recordings disk can't take
 the database down with it.
 
-| In the container | Contents                                   | Back it up? |
+| In the container | Contents                                          | Back it up? |
 | ---------------- | ------------------------------------------------- | ----------- |
 | `/data`          | Database, encryption key, channel logos           | Yes         |
 | `/recordings`    | Recordings                                        | If you like |
-| `/cache`         | The buffer of a paused channel; cleared at start  | No          |
+| `/cache`         | Pause and cast buffers; cleared at start          | No          |
 
 `/recordings` and `/cache` are only used when `RECORDINGS_DIR` and `CACHE_DIR` point there, as in
 the compose file below. Without them everything lives under `/data`.
@@ -47,6 +47,10 @@ services:
       TZ: Europe/Amsterdam
       RECORDINGS_DIR: /recordings
       CACHE_DIR: /cache
+      # Behind a reverse proxy:
+      # TRUST_PROXY: "true"
+      # The address you use for the server (see "Find it by name"):
+      # PUBLIC_URL: https://tv.example.com
     volumes:
       - ./data:/data
       - ./recordings:/recordings
@@ -67,7 +71,7 @@ Open `http://<your-server>:8080`. A new install starts a setup wizard:
 1. Set the `admin` password (10+ characters) and the language.
 2. Add an Xtream or M3U playlist.
 3. Pick the logo countries (default: international).
-4. Get the Android app and pair it.
+4. Download the Android app.
 
 Everything after step 1 can be skipped and done later in Settings. To skip the wizard, set
 `ADMIN_PASSWORD` before the very first start.
@@ -84,7 +88,7 @@ All of these are optional.
 
 | Variable         | Default            | What it does                                                        |
 | ---------------- | ------------------ | ------------------------------------------------------------------- |
-| `PORT`           | `8080`             | Port inside the container                                           |
+| `PORT`           | `8080`             | Port the server listens on (with host network: on the host)         |
 | `TZ`             | UTC                | Time zone for the guide and recordings                              |
 | `RECORDINGS_DIR` | `/data/recordings` | Where recordings go                                                 |
 | `CACHE_DIR`      | `/data`            | Where the pause buffer goes (in a `timeshift` folder)               |
@@ -141,6 +145,18 @@ Most providers send HLS, which is fine as is. If yours sends one long MPEG-TS st
 proxy_buffering off;
 proxy_read_timeout 1h;
 ```
+
+## Casting to a Chromecast
+
+Cast from the web app in Chrome, or from the Android app on a phone or tablet. The Chromecast gets
+its stream from your server, so:
+
+- the web app must run over HTTPS (Chrome only offers casting there);
+- the Chromecast must reach the address you opened the server on (your home network, or your
+  HTTPS domain).
+
+Live TV starts about 12 seconds behind live. Casting takes over the place of the device that
+started it.
 
 ## Updating
 
