@@ -16,7 +16,7 @@ on:
         type: string
         required: true
       notes:
-        description: Server only, optional. Release notes in English; one line per item, separated by |
+        description: 'Server only, optional. Release notes in Markdown, lines separated by | (e.g. ## New|- Added X|- Added Y)'
         type: string
         required: false
 
@@ -129,7 +129,8 @@ jobs:
         run: |
           BODY="Docker image \`$TARGET:$VERSION\` (also \`${VERSION%.*}\` and \`latest\`)."
           if [ -n "$NOTES" ]; then
-            BODY="$BODY"$'\n\n'"$(printf '%s' "$NOTES" | tr '|' '\n' | sed 's/^ *//; /^$/d; s/^/- /')"
+            # Written as given: "## " a heading, "- " an item, anything else a line of its own.
+            BODY="$BODY"$'\n\n'"$(printf '%s' "$NOTES" | tr '|' '\n' | sed 's/^ *//')"
           fi
           BODY="$BODY"$'\n\n'"See [Installing the server](https://casazapp.tv/docs/server.html) and \`docker compose pull\` to update."
           gh release create "server-v$VERSION" -R "$GITHUB_REPOSITORY" \
