@@ -93,6 +93,7 @@ All of these are optional.
 | `ADMIN_PASSWORD` | set in the wizard  | Password for `admin` on the first start only; skips the wizard      |
 | `MDNS`           | `true`             | Announce the server on the home network (needs host network, below) |
 | `MDNS_NAME`      | `casazapp`         | The `.local` name: `casazapp` becomes `casazapp.local`              |
+| `PUBLIC_URL`     | –                  | Your address for the server; apps that find it connect there        |
 | `LOG_LEVEL`      | `info`             | `debug`, `info`, `warn` or `error`                                  |
 
 ### About APP_SECRET
@@ -116,9 +117,12 @@ services:
     # ports: is ignored with host network; the server listens on 8080 (PORT to change it)
 ```
 
+Set `PUBLIC_URL` to the address you use for the server (for example `https://tv.example.com`):
+the app then connects there instead of to the local IP, so it also works away from home.
+
 Without host network the Android app still finds the server: it scans your network for it.
 
-Bookmark `app.casazapp.tv` to open your server from any browser: it remembers the address in
+Bookmark `connect.casazapp.tv` to open your server from any browser: it remembers the address in
 that browser.
 
 ## Behind a reverse proxy
