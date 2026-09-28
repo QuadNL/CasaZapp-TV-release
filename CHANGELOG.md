@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.5.1 (September 2026)
+
+### Server
+
+- Added Chromecast support
+- Added improved device pairing experience
+- Added mDNS support (casazapp.local:port, requires docker network_mode: host)
+- Docker config update: Add PUBLIC_URL for better mDNS support (requires proxy)
+
+Introducing connect.casazapp.tv for easy server connections.
+
+### Android app
+
+- Added Chromecast support (phone and tablet, with server)
+- Added improved device pairing experience
+- Finds your server on the network automatically
+- App version now shows with a v
+
 ## 0.5.0 (September 2026)
 
 Server and Android app share version 0.5.0.
