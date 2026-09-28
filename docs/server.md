@@ -91,6 +91,9 @@ All of these are optional.
 | `TRUST_PROXY`    | `false`            | `true` behind a reverse proxy, so it sees the real client and HTTPS |
 | `APP_SECRET`     | generated          | Key for the stored provider passwords (see below)                   |
 | `ADMIN_PASSWORD` | set in the wizard  | Password for `admin` on the first start only; skips the wizard      |
+| `MDNS`           | `true`             | Announce the server on the home network (needs host network, below) |
+| `MDNS_NAME`      | `casazapp`         | The `.local` name: `casazapp` becomes `casazapp.local`              |
+| `PUBLIC_URL`     | –                  | Your address for the server; apps that find it connect there        |
 | `LOG_LEVEL`      | `info`             | `debug`, `info`, `warn` or `error`                                  |
 
 ### About APP_SECRET
@@ -98,6 +101,29 @@ All of these are optional.
 Provider passwords are stored encrypted. The key is in `/data/secret.key` unless you set
 `APP_SECRET`. Lose both and the server can no longer read your playlist logins: you'd have to
 enter them again. Keep `/data` in your backup and you're fine.
+
+## Find it by name on your network
+
+The server announces itself as `casazapp.local`. The Android app then lists it on its connect
+screen, and a browser on a PC or Mac can open `http://casazapp.local:8080`.
+
+Docker keeps that announcement inside the container unless the container uses the host network:
+
+```yaml
+services:
+  casazapp-tv:
+    image: ghcr.io/quadnl/casazapp-tv-release:latest
+    network_mode: host
+    # ports: is ignored with host network; the server listens on 8080 (PORT to change it)
+```
+
+Set `PUBLIC_URL` to the address you use for the server (for example `https://tv.example.com`):
+the app then connects there instead of to the local IP, so it also works away from home.
+
+Without host network the Android app still finds the server: it scans your network for it.
+
+Bookmark `connect.casazapp.tv` to open your server from any browser: it remembers the address in
+that browser.
 
 ## Behind a reverse proxy
 
