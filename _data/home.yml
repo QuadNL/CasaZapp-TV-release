@@ -35,7 +35,7 @@ features:
     text: The Android app can also run standalone, with a playlist on the device. Handy on the road.
 
 screens_title: One player on every screen
-screens_text: The same look and the same buttons on the TV, the phone, the tablet and the web.
+screens_text: Gives the same experience on every device. 
 # Each tab with its pictures (from assets/screens) and a line under each.
 screens:
   - tab: TV
@@ -135,7 +135,7 @@ faq:
   - q: Does it come with channels?
     a: No. CasaZapp TV is a player. You need to bring your own playlist from a provider.
   - q: Can I try it without a subscription?
-    a: Yes. Add the demo playlist from this repository (demo/playlist.m3u) — made-up channels with a test video and a guide.
+    a: Yes. Add the demo playlist from this repository (demo/playlist.m3u). 
   - q: Which devices does the app run on?
     a: Google TV, Chromecast with Google TV, Android TV boxes, and Android phones and tablets. Everything else uses the web app in the browser.
   - q: Does my stream go through CasaZapp TV server?
