@@ -70,10 +70,8 @@ jobs:
           ls notes
           # Newest first, as the pop-up reads.
           FILES=$(ls notes/*.json | sort -V -r)
-          jq -s '{
-            nl: {new: (map(.nl.new) | add), fixes: (map(.nl.fixes) | add)},
-            en: {new: (map(.en.new) | add), fixes: (map(.en.fixes) | add)}
-          }' $FILES > out/release-notes.json
+          # English only; the same text under nl too, for apps that look for their own language.
+          jq -s '{new: (map(.en.new // []) | add), fixes: (map(.en.fixes // []) | add)} | {en: ., nl: .}'             $FILES > out/release-notes.json
           cat out/release-notes.json
       - name: Publish
         env:
