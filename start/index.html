@@ -3,7 +3,7 @@ layout: default
 title: Open your server
 permalink: /start/
 ---
-<!-- app.casazapp.tv lands here: it remembers your CasaZapp TV server(s) in this browser only. -->
+<!-- connect.casazapp.tv lands here: it remembers your CasaZapp TV server(s) in this browser only. -->
 <section class="section">
   <div class="wrap start">
     <h1>Open your CasaZapp TV</h1>
@@ -12,6 +12,14 @@ permalink: /start/
     <div id="opening" class="start-card" hidden>
       <p>Opening <b id="opening-url"></b>…</p>
       <button type="button" class="btn" id="cancel">Cancel</button>
+    </div>
+
+    <!-- A browser page can't look for the server itself (an https page may not reach http), so
+         the name the server announces on the home network is offered as one click. -->
+    <div id="suggest" class="start-card" hidden>
+      <h3>On your home network?</h3>
+      <p class="start-hint">A server with host network answers as <code>casazapp.local</code>.</p>
+      <button type="button" class="btn btn-primary" id="try-local">Open casazapp.local:8080</button>
     </div>
 
     <div id="servers" class="start-card" hidden>
@@ -83,8 +91,10 @@ permalink: /start/
     var el = function (id) { return document.getElementById(id); };
     var timer;
 
+    var LOCAL = 'http://casazapp.local:8080';
     var render = function () {
       list = load();
+      el('suggest').hidden = list.indexOf(LOCAL) !== -1;
       el('servers').hidden = list.length === 0;
       el('add-title').textContent = list.length ? 'Add another server' : 'Add your server';
       el('auto').checked = autoOn();
@@ -113,6 +123,7 @@ permalink: /start/
     };
 
     el('auto').onchange = function (e) { setAuto(e.target.checked); };
+    el('try-local').onclick = function () { open(LOCAL); };
     el('add').onsubmit = function (e) {
       e.preventDefault();
       var url = normalise(el('url').value);
