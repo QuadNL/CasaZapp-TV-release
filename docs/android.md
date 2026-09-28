@@ -25,8 +25,8 @@ press downloads and installs it. The app closes when the update is done; open it
 1. Open the app and choose **Connect to a CasaZapp TV server**.
 2. Enter the address of your server, for example `https://tv.example.com`.
 3. The app shows a code of eight characters.
-4. On a device where you're signed in (a browser, a phone), go to Settings → Connection and devices
-   and enter the code.
+4. Accept it in the pop-up that appears in the web app or the Android app where you're signed in.
+   Check that the code matches. Or open `<your server>/pair` in a browser and enter the code there.
 
 That's all. The device stays paired until you remove it on the same page. It never sees your
 password.
