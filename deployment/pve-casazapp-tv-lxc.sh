@@ -52,13 +52,25 @@ pick_storage() {
   printf -v "$var" '%s' "$answer"
 }
 
+# The bridges configured on this node, as under Network in the Proxmox interface (not the firewall
+# and VLAN bridges Proxmox makes by itself), each with its comment or address.
+bridges() {
+  pvesh get "/nodes/$(hostname)/network" --type any_bridge --output-format json 2>/dev/null |
+    perl -MJSON::PP -e '
+      for (sort { $a->{iface} cmp $b->{iface} } @{ decode_json(join "", <STDIN>) }) {
+        (my $note = $_->{comments} // $_->{cidr} // "") =~ s/\s+/ /g;
+        $note =~ s/^ | $//g;
+        print "$_->{iface}\t$note\n";
+      }'
+}
+
 # A list of the network bridges; vmbr0 without asking in the default settings.
 pick_bridge() {
-  local var=$1 ask=$2 items=() bridge answer
+  local var=$1 ask=$2 items=() bridge note answer
   [ -n "${!var:-}" ] && return
-  for bridge in $(ip -o link show type bridge | awk -F': ' '{ print $2 }' | grep -Ev '^(docker|br-)'); do
-    items+=("$bridge" "")
-  done
+  while IFS=$'\t' read -r bridge note; do
+    items+=("$bridge" "$(printf '%s' "$note" | cut -c1-40)")
+  done < <(bridges)
   [ "${#items[@]}" -gt 0 ] || fail "no network bridge found"
   if [ "$ask" != yes ] || [ "${#items[@]}" -eq 2 ] || ! interactive; then
     if ip link show vmbr0 >/dev/null 2>&1; then answer=vmbr0; else answer=${items[0]}; fi
