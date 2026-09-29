@@ -170,13 +170,6 @@ docker compose pull
 docker compose up -d
 ```
 
-A restart cuts off whoever is watching. To warn them first, run this a few seconds before; open
-apps show a countdown and reload by themselves afterwards:
-
-```bash
-docker exec casazapp-tv announce-maintenance 10
-```
-
 ## Backups and moving
 
 Stop the container first, so the database is closed cleanly, then copy the `data` folder. On the
