@@ -18,7 +18,7 @@ The server is `ghcr.io/quadnl/casazapp-tv-release`, for `amd64` and `arm64`
 | -------- | ------------------------------------------ |
 | `latest` | The newest release                         |
 | `0.5`    | The newest 0.5 release, not the next minor |
-| `0.5.1`  | Exactly that version                       |
+| `0.5.2`  | Exactly that version (any version number)  |
 
 ## Folders
 
@@ -86,19 +86,19 @@ docker exec casazapp-tv reset-password
 
 All of these are optional.
 
-| Variable         | Default            | What it does                                                        |
-| ---------------- | ------------------ | ------------------------------------------------------------------- |
-| `PORT`           | `8080`             | Port the server listens on (with host network: on the host)         |
-| `TZ`             | UTC                | Time zone for the guide and recordings                              |
-| `RECORDINGS_DIR` | `/data/recordings` | Where recordings go                                                 |
-| `CACHE_DIR`      | `/data`            | Where the pause buffer goes (in a `timeshift` folder)               |
-| `TRUST_PROXY`    | `false`            | `true` behind a reverse proxy, so it sees the real client and HTTPS |
-| `APP_SECRET`     | generated          | Key for the stored provider passwords (see below)                   |
-| `ADMIN_PASSWORD` | set in the wizard  | Password for `admin` on the first start only; skips the wizard      |
-| `MDNS`           | `true`             | Announce the server on the home network (needs host network, below) |
-| `MDNS_NAME`      | `casazapp`         | The `.local` name: `casazapp` becomes `casazapp.local`              |
-| `PUBLIC_URL`     | –                  | Your address for the server; apps that find it connect there        |
-| `LOG_LEVEL`      | `info`             | `debug`, `info`, `warn` or `error`                                  |
+| Variable         | Default            | What it does                                                         |
+| ---------------- | ------------------ | -------------------------------------------------------------------- |
+| `PORT`           | `8080`             | Port the server listens on (with host network: on the host)          |
+| `TZ`             | UTC                | Time zone for the guide and recordings                               |
+| `RECORDINGS_DIR` | `/data/recordings` | Where recordings go                                                  |
+| `CACHE_DIR`      | `/data`            | Where the pause and cast buffers go (`timeshift` and `cast` folders) |
+| `TRUST_PROXY`    | `false`            | `true` behind a reverse proxy, so it sees the real client and HTTPS  |
+| `APP_SECRET`     | generated          | Key for the stored provider passwords (see below)                    |
+| `ADMIN_PASSWORD` | set in the wizard  | Password for `admin` on the first start only; skips the wizard       |
+| `MDNS`           | `true`             | Announce the server on the home network (needs host network, below)  |
+| `MDNS_NAME`      | `casazapp`         | The `.local` name: `casazapp` becomes `casazapp.local`               |
+| `PUBLIC_URL`     | –                  | Your address for the server; apps that find it connect there         |
+| `LOG_LEVEL`      | `info`             | `debug`, `info`, `warn` or `error`                                   |
 
 ### About APP_SECRET
 
@@ -159,6 +159,9 @@ Live TV starts about 12 seconds behind live. Casting takes over the place of the
 started it.
 
 ## Updating
+
+When a newer server is out, Settings → About shows "Update available" under the server version,
+with what's new. For that the server asks GitHub for the list of releases every six hours.
 
 ```bash
 docker compose pull
