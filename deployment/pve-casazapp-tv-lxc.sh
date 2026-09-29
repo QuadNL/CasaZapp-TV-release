@@ -5,8 +5,8 @@
 #   bash -c "$(curl -fsSL https://raw.githubusercontent.com/QuadNL/CasaZapp-TV-release/main/deployment/pve-casazapp-tv-lxc.sh)"
 #
 # It makes a Debian 13 container with Docker and starts the server from
-# deployment/docker-compose.yml in the same repo. Every question has a default; press Enter to take
-# it. Set any of these, as with the community scripts, and that question is skipped:
+# deployment/docker-compose.yml in the same repo. Choose "Default settings", or "Advanced settings"
+# to set each value yourself. Set any of these, as with the community scripts, and it isn't asked:
 #   var_ctid var_hostname var_cpu var_ram var_disk var_storage var_template_storage var_brg
 #   var_public_url var_trust_proxy
 # Without a terminal nothing is asked at all.
@@ -20,16 +20,52 @@ APP_DIR="/opt/casazapp-tv"
 say() { printf '\033[1;33m==>\033[0m %s\n' "$*"; }
 fail() { printf '\033[1;31mError:\033[0m %s\n' "$*" >&2; exit 1; }
 
-# A question with a default; asked only when there is someone to answer it.
-ask() {
+# Menus as in the Proxmox community scripts; whiptail is on every Proxmox host.
+TITLE="CasaZapp TV"
+interactive() { [ -t 0 ] && command -v whiptail >/dev/null; }
+
+# A text box with a default; skipped when the variable is set already.
+input() {
   local var=$1 question=$2 default=$3 answer
-  if [ -n "${!var:-}" ]; then return; fi
-  if [ -t 0 ]; then
-    read -rp "$question [$default]: " answer
-    printf -v "$var" '%s' "${answer:-$default}"
+  [ -n "${!var:-}" ] && return
+  if interactive; then
+    answer=$(whiptail --title "$TITLE" --inputbox "$question" 10 68 "$default" 3>&1 1>&2 2>&3) || fail "cancelled"
   else
-    printf -v "$var" '%s' "$default"
+    answer=$default
   fi
+  printf -v "$var" '%s' "$answer"
+}
+
+# A list of the active storages that hold the given content, with their type and free space.
+pick_storage() {
+  local var=$1 question=$2 content=$3 items=() name type avail answer
+  [ -n "${!var:-}" ] && return
+  while read -r name type avail; do
+    items+=("$name" "$(printf '%-10s %5s GB free' "$type" "$((avail / 1024 / 1024))")")
+  done < <(pvesm status -content "$content" 2>/dev/null | awk 'NR > 1 && $3 == "active" { print $1, $2, $6 }')
+  [ "${#items[@]}" -gt 0 ] || fail "no storage for $content found"
+  if [ "${#items[@]}" -eq 2 ] || ! interactive; then
+    printf -v "$var" '%s' "${items[0]}"
+    return
+  fi
+  answer=$(whiptail --title "$TITLE" --menu "$question" 16 68 6 "${items[@]}" 3>&1 1>&2 2>&3) || fail "cancelled"
+  printf -v "$var" '%s' "$answer"
+}
+
+# A list of the network bridges; vmbr0 without asking in the default settings.
+pick_bridge() {
+  local var=$1 ask=$2 items=() bridge answer
+  [ -n "${!var:-}" ] && return
+  for bridge in $(ip -o link show type bridge | awk -F': ' '{ print $2 }' | grep -Ev '^(docker|br-)'); do
+    items+=("$bridge" "")
+  done
+  [ "${#items[@]}" -gt 0 ] || fail "no network bridge found"
+  if [ "$ask" != yes ] || [ "${#items[@]}" -eq 2 ] || ! interactive; then
+    if ip link show vmbr0 >/dev/null 2>&1; then answer=vmbr0; else answer=${items[0]}; fi
+  else
+    answer=$(whiptail --title "$TITLE" --menu "Network bridge" 14 50 5 "${items[@]}" 3>&1 1>&2 2>&3) || fail "cancelled"
+  fi
+  printf -v "$var" '%s' "$answer"
 }
 
 [ "$(id -u)" -eq 0 ] || fail "run this as root"
@@ -46,25 +82,50 @@ if ! command -v pct >/dev/null && [ -f "$APP_DIR/docker-compose.yml" ]; then
 fi
 command -v pct >/dev/null && command -v pveam >/dev/null || fail "pct and pveam not found: run this on a Proxmox VE host"
 
-# The first active storage that holds the given content (rootdir for containers, vztmpl for templates).
-first_storage() { pvesm status -content "$1" 2>/dev/null | awk 'NR > 1 && $3 == "active" { print $1; exit }'; }
-
 say "CasaZapp TV server in a Proxmox LXC"
-ask var_ctid "Container ID" "$(pvesh get /cluster/nextid)"
-ask var_hostname "Hostname" "casazapp-tv"
-ask var_cpu "CPU cores" "2"
-ask var_ram "Memory (MB)" "2048"
-ask var_disk "Disk (GB), recordings included" "32"
-ask var_storage "Storage for the container" "$(first_storage rootdir)"
-ask var_template_storage "Storage for the template" "$(first_storage vztmpl)"
-ask var_brg "Network bridge" "vmbr0"
-ask var_public_url "Your own address, e.g. https://tv.example.com" "none"
-[ "$var_public_url" = "none" ] && var_public_url=""
-if [ -n "$var_public_url" ]; then ask var_trust_proxy "Behind a reverse proxy? (true/false)" "true"; fi
+MODE=default
+if interactive; then
+  MODE=$(whiptail --title "$TITLE" --menu "Set up a CasaZapp TV server in a new container." 12 68 2 \
+    default "Default settings (recommended)" \
+    advanced "Advanced settings" 3>&1 1>&2 2>&3) || fail "cancelled"
+fi
+if [ "$MODE" = advanced ]; then
+  input var_ctid "Container ID" "$(pvesh get /cluster/nextid)"
+  input var_hostname "Hostname" "casazapp-tv"
+  input var_cpu "CPU cores" "2"
+  input var_ram "Memory in MB" "2048"
+  input var_disk "Disk size in GB, recordings included" "32"
+  input var_public_url "Your own address, for example https://tv.example.com. Leave empty if you have none." ""
+fi
+var_ctid=${var_ctid:-$(pvesh get /cluster/nextid)}
+var_hostname=${var_hostname:-casazapp-tv}
+var_cpu=${var_cpu:-2}
+var_ram=${var_ram:-2048}
+var_disk=${var_disk:-32}
+var_public_url=${var_public_url:-}
+pick_storage var_storage "Where should the container go?" rootdir
+pick_storage var_template_storage "Where should the Debian template go?" vztmpl
+pick_bridge var_brg "$([ "$MODE" = advanced ] && echo yes)"
+if [ -n "$var_public_url" ] && [ -z "${var_trust_proxy:-}" ]; then
+  var_trust_proxy=false
+  if ! interactive || whiptail --title "$TITLE" --yesno "Is $var_public_url behind a reverse proxy?" 8 68; then
+    var_trust_proxy=true
+  fi
+fi
 var_trust_proxy=${var_trust_proxy:-false}
 
-[ -n "$var_storage" ] || fail "no storage for containers found"
-[ -n "$var_template_storage" ] || fail "no storage for templates found"
+if interactive; then
+  whiptail --title "$TITLE" --yesno "Create this container?
+
+  ID:        $var_ctid
+  Hostname:  $var_hostname
+  CPU:       $var_cpu cores
+  Memory:    $var_ram MB
+  Disk:      $var_disk GB on $var_storage
+  Network:   $var_brg (DHCP)
+  Address:   ${var_public_url:-none}" 18 68 || fail "cancelled"
+fi
+
 pct status "$var_ctid" >/dev/null 2>&1 && fail "container $var_ctid already exists"
 
 say "Getting the newest Debian template"
