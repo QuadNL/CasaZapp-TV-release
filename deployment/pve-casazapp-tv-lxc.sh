@@ -8,7 +8,7 @@
 # deployment/docker-compose.yml in the same repo. Choose "Default settings", or "Advanced settings"
 # to set each value yourself. Set any of these, as with the community scripts, and it isn't asked:
 #   var_ctid var_hostname var_cpu var_ram var_disk var_storage var_template_storage var_brg
-#   var_public_url var_trust_proxy var_mdns_name
+#   var_ip var_gw var_public_url var_trust_proxy var_mdns_name
 # Without a terminal nothing is asked at all.
 #
 # Inside the container, "update" (which this script adds) updates the server.
@@ -201,7 +201,7 @@ if [ "$MODE" = advanced ]; then
   input var_cpu "CPU cores" "2"
   input var_ram "Memory in MB" "2048"
   input var_disk "Disk size in GB, recordings included" "32"
-  input var_mdns_name "Name on your home network (a second server needs its own): NAME.local" "casazapp"
+  input var_mdns_name "Name on your home network (NAME.local)" "casazapp"
   input var_public_url "Your own address, for example https://tv.example.com. Leave empty if you have none." ""
 fi
 var_ctid=${var_ctid:-$(pvesh get /cluster/nextid)}
@@ -214,6 +214,18 @@ var_mdns_name=${var_mdns_name:-casazapp}
 pick_storage var_storage "Where should the container go?" rootdir
 pick_storage var_template_storage "Where should the Debian template go?" vztmpl
 pick_bridge var_brg "$([ "$MODE" = advanced ] && echo yes)"
+# DHCP, or a fixed address with its gateway (the host's own gateway as the suggestion).
+if [ "$MODE" = advanced ]; then
+  input var_ip "IP address: dhcp, or a fixed one such as 192.168.1.50/24" "dhcp"
+fi
+var_ip=${var_ip:-dhcp}
+if [ "$var_ip" != dhcp ]; then
+  case $var_ip in */*) ;; *) var_ip="$var_ip/24" ;; esac
+  input var_gw "Gateway" "$(ip route show default | awk '{ print $3; exit }')"
+  [ -n "${var_gw:-}" ] || fail "A fixed IP address needs a gateway."
+fi
+NET_IP="ip=$var_ip${var_gw:+,gw=$var_gw}"
+NET_TEXT=$([ "$var_ip" = dhcp ] && echo "DHCP" || echo "$var_ip via ${var_gw:-}")
 if [ -n "$var_public_url" ] && [ -z "${var_trust_proxy:-}" ]; then
   var_trust_proxy=false
   if ! interactive || whiptail --title "$TITLE" --yesno "Is $var_public_url behind a reverse proxy?" 8 68; then
@@ -230,7 +242,7 @@ if interactive; then
   CPU:       $var_cpu cores
   Memory:    $var_ram MB
   Disk:      $var_disk GB on $var_storage
-  Network:   $var_brg (DHCP)
+  Network:   $var_brg, $NET_TEXT
   Name:      $var_mdns_name.local
   Address:   ${var_public_url:-none}" 19 68 || fail "Cancelled."
 fi
@@ -266,7 +278,7 @@ create_container() {
     --memory "$var_ram" \
     --swap 512 \
     --rootfs "$var_storage:$var_disk" \
-    --net0 "name=eth0,bridge=$var_brg,ip=dhcp" \
+    --net0 "name=eth0,bridge=$var_brg,$NET_IP" \
     --features nesting=1,keyctl=1 \
     --unprivileged 1 \
     --onboot 1 \
@@ -293,7 +305,7 @@ wait_network() {
     fi
     sleep 2
   done
-  echo "The container got no IP address or can't reach the internet (DHCP on $var_brg?)"
+  echo "The container got no IP address or can't reach the internet (check $NET_TEXT on $var_brg)"
   return 1
 }
 
@@ -328,7 +340,7 @@ EOF
 
 setting "Container" "$var_ctid ($var_hostname), $var_cpu cores, $var_ram MB"
 setting "Disk" "$var_disk GB on $var_storage"
-setting "Network" "$var_brg, DHCP, $var_mdns_name.local"
+setting "Network" "$var_brg, $NET_TEXT, $var_mdns_name.local"
 if [ -n "$var_public_url" ]; then setting "Address" "$var_public_url"; fi
 echo
 # The host's time zone, for the guide and recordings (the container gets it too, --timezone host).
