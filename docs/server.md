@@ -53,6 +53,18 @@ EOF
 docker compose up -d
 ```
 
+## On Proxmox
+
+Run this in the shell of your Proxmox host. It makes a Debian container with Docker and starts the
+server in it, asking only for things like the container ID and disk size (Enter takes the default):
+
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/QuadNL/CasaZapp-TV-release/main/deployment/pve-casazapp-tv-lxc.sh)"
+```
+
+Read [the script](https://github.com/QuadNL/CasaZapp-TV-release/blob/main/deployment/pve-casazapp-tv-lxc.sh)
+first if you like. To update later, run the same line in the container's console.
+
 ## docker-compose.yml
 
 The file from the quick start, [`deployment/docker-compose.yml`](https://github.com/QuadNL/CasaZapp-TV-release/blob/main/deployment/docker-compose.yml)
