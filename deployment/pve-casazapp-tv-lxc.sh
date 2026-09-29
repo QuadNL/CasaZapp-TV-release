@@ -8,7 +8,7 @@
 # deployment/docker-compose.yml in the same repo. Choose "Default settings", or "Advanced settings"
 # to set each value yourself. Set any of these, as with the community scripts, and it isn't asked:
 #   var_ctid var_hostname var_cpu var_ram var_disk var_storage var_template_storage var_brg
-#   var_public_url var_trust_proxy
+#   var_public_url var_trust_proxy var_mdns_name
 # Without a terminal nothing is asked at all.
 #
 # Run the same line inside the container to update the server.
@@ -84,12 +84,15 @@ pick_bridge() {
 
 # Inside the container this script made: update the server, as the community scripts do.
 if ! command -v pct >/dev/null && [ -f "$APP_DIR/docker-compose.yml" ]; then
-  say "Updating CasaZapp TV"
   cd "$APP_DIR"
-  docker compose pull --quiet
-  docker compose up -d
+  say "Updating the container"
+  apt-get update -q >/dev/null && DEBIAN_FRONTEND=noninteractive apt-get upgrade -y -q >/dev/null
+  say "Updating CasaZapp TV"
+  # The server runs as user 1000; folders made for root by an older version of this script get fixed.
+  mkdir -p data recordings cache && chown -R 1000:1000 data recordings cache
+  docker compose pull --quiet && docker compose up -d --quiet-pull 2>/dev/null
   docker image prune -f >/dev/null
-  say "Done"
+  say "Finished"
   exit 0
 fi
 command -v pct >/dev/null && command -v pveam >/dev/null || fail "pct and pveam not found: run this on a Proxmox VE host"
@@ -107,6 +110,7 @@ if [ "$MODE" = advanced ]; then
   input var_cpu "CPU cores" "2"
   input var_ram "Memory in MB" "2048"
   input var_disk "Disk size in GB, recordings included" "32"
+  input var_mdns_name "Name on your home network (a second server needs its own): NAME.local" "casazapp"
   input var_public_url "Your own address, for example https://tv.example.com. Leave empty if you have none." ""
 fi
 var_ctid=${var_ctid:-$(pvesh get /cluster/nextid)}
@@ -115,6 +119,7 @@ var_cpu=${var_cpu:-2}
 var_ram=${var_ram:-2048}
 var_disk=${var_disk:-32}
 var_public_url=${var_public_url:-}
+var_mdns_name=${var_mdns_name:-casazapp}
 pick_storage var_storage "Where should the container go?" rootdir
 pick_storage var_template_storage "Where should the Debian template go?" vztmpl
 pick_bridge var_brg "$([ "$MODE" = advanced ] && echo yes)"
@@ -135,12 +140,13 @@ if interactive; then
   Memory:    $var_ram MB
   Disk:      $var_disk GB on $var_storage
   Network:   $var_brg (DHCP)
-  Address:   ${var_public_url:-none}" 18 68 || fail "cancelled"
+  Name:      $var_mdns_name.local
+  Address:   ${var_public_url:-none}" 19 68 || fail "cancelled"
 fi
 
 pct status "$var_ctid" >/dev/null 2>&1 && fail "container $var_ctid already exists"
 
-say "Getting the newest Debian template"
+say "Getting the Debian template"
 pveam update >/dev/null
 # Debian 13, or 12 on an older Proxmox that doesn't offer 13 yet, for this host's processor: the
 # list has amd64 and arm64 templates, and the wrong one can't start ("Exec format error").
@@ -174,6 +180,23 @@ if ! pct start "$var_ctid"; then
        Remove it with: pct destroy $var_ctid"
 fi
 
+# From here on the details go to a log; the screen shows the steps only.
+LOG="/tmp/casazapp-tv-install-$var_ctid.log"
+: > "$LOG"
+
+# A command in the container, with a locale that exists there (the one from an SSH session may not).
+in_ct() { pct exec "$var_ctid" -- env LANG=C.UTF-8 LC_ALL=C.UTF-8 DEBIAN_FRONTEND=noninteractive bash -c "$1"; }
+
+# Runs a step; on failure shows the end of the log and stops.
+step() {
+  local title=$1 command=$2
+  say "$title"
+  if ! in_ct "$command" >>"$LOG" 2>&1; then
+    tail -n 20 "$LOG" >&2
+    fail "$title failed. The whole log is in $LOG"
+  fi
+}
+
 say "Waiting for the network"
 IP=""
 for _ in $(seq 1 30); do
@@ -183,22 +206,33 @@ for _ in $(seq 1 30); do
 done
 [ -n "$IP" ] || fail "the container got no IP address (DHCP on $var_brg?)"
 
-say "Installing Docker"
-pct exec "$var_ctid" -- bash -c "apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get install -y -qq curl ca-certificates >/dev/null"
-pct exec "$var_ctid" -- bash -c "curl -fsSL https://get.docker.com | sh >/dev/null"
+step "Updating the container" "apt-get update -q && apt-get upgrade -y -q && apt-get install -y -q curl ca-certificates"
+step "Installing Docker" "curl -fsSL https://get.docker.com | sh"
 
-say "Starting CasaZapp TV"
-pct exec "$var_ctid" -- bash -c "mkdir -p $APP_DIR && cd $APP_DIR \
+# The server runs as user 1000 in its image; Docker would make these folders for root.
+step "Setting up CasaZapp TV" "mkdir -p $APP_DIR/data $APP_DIR/recordings $APP_DIR/cache \
+  && chown -R 1000:1000 $APP_DIR/data $APP_DIR/recordings $APP_DIR/cache \
+  && cd $APP_DIR \
   && curl -fsSLO $REPO_RAW/deployment/docker-compose.yml \
-  && printf 'PUBLIC_URL=%s\nTRUST_PROXY=%s\n' '$var_public_url' '$var_trust_proxy' > .env \
+  && printf 'PUBLIC_URL=%s\nTRUST_PROXY=%s\nMDNS_NAME=%s\n' '$var_public_url' '$var_trust_proxy' '$var_mdns_name' > .env \
   && docker compose up -d --quiet-pull"
 
-say "Done"
+say "Checking that it runs"
+for _ in $(seq 1 30); do
+  if in_ct "curl -fsS http://127.0.0.1:8080/api/health" >/dev/null 2>&1; then RUNNING=yes; break; fi
+  sleep 2
+done
+if [ "${RUNNING:-}" != yes ]; then
+  in_ct "docker logs casazapp-tv --tail 20" >&2 || true
+  fail "the server doesn't answer. Its log is above; the install log is in $LOG"
+fi
+
+say "Finished"
 cat <<EOF
 
   CasaZapp TV runs in container $var_ctid.
 
-  Open:     http://$IP:8080   (or http://casazapp.local:8080 on your home network)
+  Open:     http://$IP:8080   (or http://$var_mdns_name.local:8080 on your home network)
   Folder:   $APP_DIR in the container (compose file, .env, data, recordings)
   Update:   run the same install line in the container's console (pct enter $var_ctid)
 
