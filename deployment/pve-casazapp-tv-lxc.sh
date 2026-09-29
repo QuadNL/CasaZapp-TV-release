@@ -50,7 +50,7 @@ EOF
     printf '  %s%s%s  %s%s%s\n' "$ORANGE" "${logo[i]}" "$RESET" "$BOLD" "${text[i]}" "$RESET"
     if [ -t 1 ]; then sleep 0.07; fi
   done
-  printf '\n  %sYour own TV player, on your own server.%s\n\n' "$DIM" "$RESET"
+  printf '\n  %sThe best TV player, in your home.%s\n\n' "$DIM" "$RESET"
 }
 
 # One step: a spinner while it runs, then a tick. Its output goes to the log; on failure the end of
