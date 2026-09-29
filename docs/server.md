@@ -60,14 +60,16 @@ docker compose up -d
 ## On Proxmox
 
 Run this in the shell of your Proxmox host. It makes a Debian container with Docker and starts the
-server in it, asking only for things like the container ID and disk size (Enter takes the default):
+server in it. Choose "Default settings", or "Advanced settings" to pick the ID, disk size, network
+bridge, a fixed IP address and more:
 
 ```bash
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/QuadNL/CasaZapp-TV-release/main/deployment/pve-casazapp-tv-lxc.sh)"
 ```
 
 Read [the script](https://github.com/QuadNL/CasaZapp-TV-release/blob/main/deployment/pve-casazapp-tv-lxc.sh)
-first if you like. To update later, run the same line in the container's console.
+first if you like. To update later, open the container's console (or `pct enter <ID>` on the host)
+and type `update`.
 
 ## docker-compose.yml
 
