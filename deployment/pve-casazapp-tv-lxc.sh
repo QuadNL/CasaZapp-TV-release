@@ -298,7 +298,7 @@ wait_network() {
 }
 
 header
-# The command "update" in the container, and a line about it when you log in there.
+# The command "update" in the container, a line about it when you log in there, and the locale.
 optimize_container() {
   local tmp
   tmp=$(mktemp)
@@ -316,6 +316,14 @@ EOF
 EOF
   pct push "$var_ctid" "$tmp" /etc/motd --perms 0644
   rm -f "$tmp"
+  # The host's locale in the container too: a console or SSH session brings it along, and without it
+  # every shell there warns "setlocale: cannot change locale".
+  local locale=${LC_ALL:-${LANG:-en_US.UTF-8}}
+  case $locale in C | C.* | POSIX) locale=en_US.UTF-8 ;; esac
+  in_ct "apt-get install -y -q locales \
+    && sed -i 's/^# *\\($locale \\)/\\1/' /etc/locale.gen \
+    && locale-gen \
+    && update-locale LANG=$locale"
 }
 
 setting "Container" "$var_ctid ($var_hostname), $var_cpu cores, $var_ram MB"
