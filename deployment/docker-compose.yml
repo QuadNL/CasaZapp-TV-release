@@ -19,6 +19,8 @@ services:
       TRUST_PROXY: ${TRUST_PROXY:-false}
       # The address you use for the server; apps that find it on the network connect there
       PUBLIC_URL: ${PUBLIC_URL:-}
+      # The name on your home network: casazapp becomes casazapp.local
+      MDNS_NAME: ${MDNS_NAME:-casazapp}
     volumes:
       - ./data:/data
       - ./recordings:/recordings

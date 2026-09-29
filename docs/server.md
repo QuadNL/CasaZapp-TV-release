@@ -37,10 +37,14 @@ the compose file below. Without them everything lives under `/data`.
 ## Quick start
 
 ```bash
-mkdir casazapp-tv && cd casazapp-tv
+mkdir -p casazapp-tv/data casazapp-tv/recordings casazapp-tv/cache && cd casazapp-tv
+sudo chown -R 1000:1000 data recordings cache
 curl -fsSLO https://raw.githubusercontent.com/QuadNL/CasaZapp-TV-release/main/deployment/docker-compose.yml
 docker compose up -d
 ```
+
+The server runs as user 1000 in the container, so the second line gives it its folders. Without
+it Docker makes them for root and the server can't open its database.
 
 That's it: open `http://<your-server>:8080`. Using your own domain behind a reverse proxy? Put
 your settings in a `.env` file next to the compose file and start again:
@@ -80,6 +84,8 @@ services:
       TRUST_PROXY: ${TRUST_PROXY:-false}
       # The address you use for the server; apps that find it on the network connect there
       PUBLIC_URL: ${PUBLIC_URL:-}
+      # The name on your home network: casazapp becomes casazapp.local
+      MDNS_NAME: ${MDNS_NAME:-casazapp}
     volumes:
       - ./data:/data
       - ./recordings:/recordings
@@ -96,7 +102,7 @@ host network, for example on Docker Desktop? Replace that line with:
       - "8080:8080"
 ```
 
-`TZ`, `TRUST_PROXY` and `PUBLIC_URL` can go in `.env`; any other setting from
+`TZ`, `TRUST_PROXY`, `PUBLIC_URL` and `MDNS_NAME` can go in `.env`; any other setting from
 [Settings](#settings) goes under `environment:`.
 
 ## First start
