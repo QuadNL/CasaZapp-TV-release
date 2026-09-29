@@ -38,7 +38,7 @@
   </script>
   <header class="top">
     <div class="wrap top-row">
-      <a class="brand hero-logo" href="{{ '/' | relative_url }}">
+      <a class="brand hero-logo" href="{{ '/' | absolute_url }}">
         <svg class="mark" viewBox="0 0 32 32" aria-hidden="true" style="animation: pop 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;">
           <rect width="32" height="32" rx="8" fill="#FFB547"/>
           <path class="house" d="M16 6.5 6.5 14.2V25a1.5 1.5 0 0 0 1.5 1.5h16a1.5 1.5 0 0 0 1.5-1.5V14.2z" pathLength="1"/>
@@ -48,10 +48,13 @@
       </a>
 
       <nav class="links" aria-label="Site">
-        <a href="{{ '/#features' | relative_url }}">Features</a>
-        <a href="{{ '/#screens' | relative_url }}">Showcase</a>
-        <a href="{{ '/docs/server.html' | relative_url }}">Guides</a>
-        <a href="{{ site.repo }}">GitHub</a>
+        {% comment %} Absolute: the connect page is also served on connect.casazapp.tv. {% endcomment %}
+        {% unless page.url == '/connect/' %}
+        <a class="wide" href="{{ '/#features' | absolute_url }}">Features</a>
+        <a class="wide" href="{{ '/#screens' | absolute_url }}">Showcase</a>
+        {% endunless %}
+        <a href="{{ '/docs/server.html' | absolute_url }}">Guides</a>
+        <a class="wide" href="{{ site.repo }}">GitHub</a>
         {% unless page.url == '/connect/' %}
         <a class="btn btn-primary top-btn" href="https://connect.casazapp.tv" target="_blank" rel="noopener">
           <svg class="ext" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 3.5H6A2.5 2.5 0 0 0 3.5 6v12A2.5 2.5 0 0 0 6 20.5h12a2.5 2.5 0 0 0 2.5-2.5v-4M14 3.5h6.5V10M20.5 3.5 10.5 13.5"/></svg>
@@ -71,7 +74,7 @@
       <span>CasaZapp TV</span>
       <span class="muted">{{ site.data.home.footer }}</span>
       <span class="foot-links">
-        <a href="{{ '/CHANGELOG.html' | relative_url }}">Changelog</a>
+        <a href="{{ '/CHANGELOG.html' | absolute_url }}">Changelog</a>
         <a href="{{ site.repo }}/issues/new/choose">Report an issue</a>
       </span>
     </div>
