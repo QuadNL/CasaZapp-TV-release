@@ -11,7 +11,7 @@
 #   var_public_url var_trust_proxy var_mdns_name
 # Without a terminal nothing is asked at all.
 #
-# Run the same line inside the container to update the server.
+# Inside the container, "update" (which this script adds) updates the server.
 set -euo pipefail
 
 REPO_RAW="https://raw.githubusercontent.com/QuadNL/CasaZapp-TV-release/main"
@@ -293,6 +293,26 @@ wait_network() {
 }
 
 header
+# The command "update" in the container, and a line about it when you log in there.
+add_update_command() {
+  local tmp
+  tmp=$(mktemp)
+  cat >"$tmp" <<EOF
+#!/bin/bash
+# Updates CasaZapp TV and this container.
+bash -c "\$(curl -fsSL $REPO_RAW/deployment/pve-casazapp-tv-lxc.sh)"
+EOF
+  pct push "$var_ctid" "$tmp" /usr/bin/update --perms 0755
+  cat >"$tmp" <<'EOF'
+
+  CasaZapp TV server. Type "update" to update it.
+  Guide: https://casazapp.tv/server
+
+EOF
+  pct push "$var_ctid" "$tmp" /etc/motd --perms 0644
+  rm -f "$tmp"
+}
+
 setting "Container" "$var_ctid ($var_hostname), $var_cpu cores, $var_ram MB"
 setting "Disk" "$var_disk GB on $var_storage"
 setting "Network" "$var_brg, DHCP, $var_mdns_name.local"
@@ -312,9 +332,16 @@ task "Setting up CasaZapp TV" in_ct "mkdir -p $APP_DIR/data $APP_DIR/recordings 
   && printf 'PUBLIC_URL=%s\nTRUST_PROXY=%s\nMDNS_NAME=%s\n' '$var_public_url' '$var_trust_proxy' '$var_mdns_name' > .env \
   && docker compose up -d --quiet-pull"
 task "Checking running state" wait_health in_ct
+# "update" in the container runs this script again there, as with the community scripts.
+task "Adding the update command" add_update_command
 rm -f "$TEMPLATE_FILE"
 
 IP=$(in_ct 'hostname -I' | awk '{ print $1 }')
 echo
-box "CasaZapp TV is running"   "Open     ${ORANGE}http://$IP:8080${RESET}"   "         http://$var_mdns_name.local:8080 on your home network"   "Connect  https://connect.casazapp.tv"   "Guide    https://casazapp.tv/server"   "Update   run the same line in the container (pct enter $var_ctid)"
+box "CasaZapp TV is running" \
+  "Open     ${ORANGE}http://$IP:8080${RESET}" \
+  "         http://$var_mdns_name.local:8080 on your home network" \
+  "Connect  https://connect.casazapp.tv" \
+  "Guide    https://casazapp.tv/server" \
+  "Update   open the container's console (pct enter $var_ctid) and type: update"
 echo
