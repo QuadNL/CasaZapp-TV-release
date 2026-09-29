@@ -38,7 +38,7 @@ the compose file below. Without them everything lives under `/data`.
 
 ```bash
 mkdir -p casazapp-tv/data casazapp-tv/recordings casazapp-tv/cache && cd casazapp-tv
-sudo chown -R 1000:1000 data recordings cache
+chown -R 1000:1000 data recordings cache   # with sudo if you are not root
 curl -fsSLO https://raw.githubusercontent.com/QuadNL/CasaZapp-TV-release/main/deployment/docker-compose.yml
 docker compose up -d
 ```
