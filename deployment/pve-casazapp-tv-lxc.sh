@@ -16,9 +16,65 @@ set -euo pipefail
 
 REPO_RAW="https://raw.githubusercontent.com/QuadNL/CasaZapp-TV-release/main"
 APP_DIR="/opt/casazapp-tv"
+LOG="/tmp/casazapp-tv-install.log"
 
-say() { printf '\033[1;33m==>\033[0m %s\n' "$*"; }
-fail() { printf '\033[1;31mError:\033[0m %s\n' "$*" >&2; exit 1; }
+ORANGE=$'\033[38;5;215m'
+GREEN=$'\033[32m'
+RED=$'\033[31m'
+DIM=$'\033[2m'
+BOLD=$'\033[1m'
+RESET=$'\033[0m'
+
+fail() { printf '\n  %s%s%s\n\n' "$RED" "$*" "$RESET" >&2; exit 1; }
+
+# The logo and the name, line by line.
+header() {
+  local logo text i
+  mapfile -t logo <<'EOF'
+╭──────────╮
+│    ╱╲    │
+│   ╱  ╲   │
+│   │▶ │   │
+╰──────────╯
+EOF
+  mapfile -t text <<'EOF'
+  ___               ____                 _______   __
+ / __|__ _ ___ __ _|_  /__ _ _ __ _ __  |_   _\ \ / /
+| (__/ _` (_-</ _` |/ // _` | '_ \ '_ \   | |  \ V /
+ \___\__,_/__/\__,_/___\__,_| .__/ .__/   |_|   \_/
+                            |_|  |_|
+EOF
+  if [ -t 1 ]; then clear; fi
+  echo
+  for i in 0 1 2 3 4; do
+    printf '  %s%s%s  %s%s%s\n' "$ORANGE" "${logo[i]}" "$RESET" "$BOLD" "${text[i]}" "$RESET"
+    if [ -t 1 ]; then sleep 0.07; fi
+  done
+  printf '\n  %sYour own TV player, on your own server.%s\n\n' "$DIM" "$RESET"
+}
+
+# One step: a spinner while it runs, then a tick. Its output goes to the log; on failure the end of
+# the log is shown.
+task() {
+  local title=$1 pid i=0 frames=(⠋ ⠙ ⠹ ⠸ ⠼ ⠴ ⠦ ⠧ ⠇ ⠏)
+  shift
+  "$@" >>"$LOG" 2>&1 &
+  pid=$!
+  if [ -t 1 ]; then
+    while kill -0 "$pid" 2>/dev/null; do
+      printf '\r  %s%s%s %s' "$ORANGE" "${frames[i % 10]}" "$RESET" "$title"
+      i=$((i + 1))
+      sleep 0.1
+    done
+  fi
+  if wait "$pid"; then
+    printf '\r  %s✔%s %s\n' "$GREEN" "$RESET" "$title"
+  else
+    printf '\r  %s✖%s %s\n\n' "$RED" "$RESET" "$title"
+    tail -n 20 "$LOG" | sed 's/^/    /' >&2
+    fail "$title failed. The whole log is in $LOG"
+  fi
+}
 
 # Menus as in the Proxmox community scripts; whiptail is on every Proxmox host.
 TITLE="CasaZapp TV"
@@ -29,7 +85,7 @@ input() {
   local var=$1 question=$2 default=$3 answer
   [ -n "${!var:-}" ] && return
   if interactive; then
-    answer=$(whiptail --title "$TITLE" --inputbox "$question" 10 68 "$default" 3>&1 1>&2 2>&3) || fail "cancelled"
+    answer=$(whiptail --title "$TITLE" --inputbox "$question" 10 68 "$default" 3>&1 1>&2 2>&3) || fail "Cancelled."
   else
     answer=$default
   fi
@@ -43,12 +99,12 @@ pick_storage() {
   while read -r name type avail; do
     items+=("$name" "$(printf '%-10s %5s GB free' "$type" "$((avail / 1024 / 1024))")")
   done < <(pvesm status -content "$content" 2>/dev/null | awk 'NR > 1 && $3 == "active" { print $1, $2, $6 }')
-  [ "${#items[@]}" -gt 0 ] || fail "no storage for $content found"
+  [ "${#items[@]}" -gt 0 ] || fail "No storage for $content found."
   if [ "${#items[@]}" -eq 2 ] || ! interactive; then
     printf -v "$var" '%s' "${items[0]}"
     return
   fi
-  answer=$(whiptail --title "$TITLE" --menu "$question" 16 68 6 "${items[@]}" 3>&1 1>&2 2>&3) || fail "cancelled"
+  answer=$(whiptail --title "$TITLE" --menu "$question" 16 68 6 "${items[@]}" 3>&1 1>&2 2>&3) || fail "Cancelled."
   printf -v "$var" '%s' "$answer"
 }
 
@@ -71,38 +127,52 @@ pick_bridge() {
   while IFS=$'\t' read -r bridge note; do
     items+=("$bridge" "$(printf '%s' "$note" | cut -c1-40)")
   done < <(bridges)
-  [ "${#items[@]}" -gt 0 ] || fail "no network bridge found"
+  [ "${#items[@]}" -gt 0 ] || fail "No network bridge found."
   if [ "$ask" != yes ] || [ "${#items[@]}" -eq 2 ] || ! interactive; then
     if ip link show vmbr0 >/dev/null 2>&1; then answer=vmbr0; else answer=${items[0]}; fi
   else
-    answer=$(whiptail --title "$TITLE" --menu "Network bridge" 14 50 5 "${items[@]}" 3>&1 1>&2 2>&3) || fail "cancelled"
+    answer=$(whiptail --title "$TITLE" --menu "Network bridge" 14 50 5 "${items[@]}" 3>&1 1>&2 2>&3) || fail "Cancelled."
   fi
   printf -v "$var" '%s' "$answer"
 }
 
-[ "$(id -u)" -eq 0 ] || fail "run this as root"
+# Waits until the server answers, running commands with the given function (here or in the
+# container); when it doesn't, the server's own log goes into ours.
+wait_health() {
+  local run=$1
+  for _ in $(seq 1 30); do
+    if $run "curl -fsS http://127.0.0.1:8080/api/health" >/dev/null 2>&1; then return 0; fi
+    sleep 2
+  done
+  echo "The server doesn't answer. Its log:"
+  $run "docker logs casazapp-tv --tail 20" || true
+  return 1
+}
+
+[ "$(id -u)" -eq 0 ] || fail "Run this as root."
 
 # Inside the container this script made: update the server, as the community scripts do.
 if ! command -v pct >/dev/null && [ -f "$APP_DIR/docker-compose.yml" ]; then
-  cd "$APP_DIR"
-  say "Updating the container"
-  apt-get update -q >/dev/null && DEBIAN_FRONTEND=noninteractive apt-get upgrade -y -q >/dev/null
-  say "Updating CasaZapp TV"
+  here() { bash -c "$1"; }
+  header
+  : >"$LOG"
+  task "Updating the container" here "apt-get update -q && DEBIAN_FRONTEND=noninteractive apt-get upgrade -y -q"
   # The server runs as user 1000; folders made for root by an older version of this script get fixed.
-  mkdir -p data recordings cache && chown -R 1000:1000 data recordings cache
-  docker compose pull --quiet && docker compose up -d --quiet-pull 2>/dev/null
-  docker image prune -f >/dev/null
-  say "Finished"
+  task "Updating CasaZapp TV" here "cd $APP_DIR && mkdir -p data recordings cache \
+    && chown -R 1000:1000 data recordings cache \
+    && docker compose pull && docker compose up -d && docker image prune -f"
+  task "Checking running state" wait_health here
+  printf '\n  %sCasaZapp TV is up to date.%s\n\n' "$BOLD" "$RESET"
   exit 0
 fi
-command -v pct >/dev/null && command -v pveam >/dev/null || fail "pct and pveam not found: run this on a Proxmox VE host"
+command -v pct >/dev/null && command -v pveam >/dev/null || fail "pct and pveam not found: run this on a Proxmox VE host."
 
-say "CasaZapp TV server in a Proxmox LXC"
+header
 MODE=default
 if interactive; then
   MODE=$(whiptail --title "$TITLE" --menu "Set up a CasaZapp TV server in a new container." 12 68 2 \
     default "Default settings (recommended)" \
-    advanced "Advanced settings" 3>&1 1>&2 2>&3) || fail "cancelled"
+    advanced "Advanced settings" 3>&1 1>&2 2>&3) || fail "Cancelled."
 fi
 if [ "$MODE" = advanced ]; then
   input var_ctid "Container ID" "$(pvesh get /cluster/nextid)"
@@ -141,99 +211,96 @@ if interactive; then
   Disk:      $var_disk GB on $var_storage
   Network:   $var_brg (DHCP)
   Name:      $var_mdns_name.local
-  Address:   ${var_public_url:-none}" 19 68 || fail "cancelled"
+  Address:   ${var_public_url:-none}" 19 68 || fail "Cancelled."
 fi
 
-pct status "$var_ctid" >/dev/null 2>&1 && fail "container $var_ctid already exists"
+pct status "$var_ctid" >/dev/null 2>&1 && fail "Container $var_ctid already exists."
 
-say "Getting the Debian template"
-pveam update >/dev/null
+LOG="/tmp/casazapp-tv-install-$var_ctid.log"
+: >"$LOG"
+TEMPLATE_FILE="$LOG.template"
+
 # Debian 13, or 12 on an older Proxmox that doesn't offer 13 yet, for this host's processor: the
 # list has amd64 and arm64 templates, and the wrong one can't start ("Exec format error").
-ARCH=$(dpkg --print-architecture)
-TEMPLATE=""
-for release in 13 12; do
-  TEMPLATE=$(pveam available --section system | awk -v r="^debian-$release-standard_.*_${ARCH}[.]tar" '$2 ~ r { print $2 }' | sort -V | tail -n 1)
-  [ -n "$TEMPLATE" ] && break
-done
-[ -n "$TEMPLATE" ] || fail "no Debian template found"
-if ! pveam list "$var_template_storage" | grep -q "$TEMPLATE"; then
-  pveam download "$var_template_storage" "$TEMPLATE" >/dev/null
-fi
+get_template() {
+  local arch release template=""
+  arch=$(dpkg --print-architecture)
+  pveam update
+  for release in 13 12; do
+    template=$(pveam available --section system | awk -v r="^debian-$release-standard_.*_${arch}[.]tar" '$2 ~ r { print $2 }' | sort -V | tail -n 1)
+    [ -n "$template" ] && break
+  done
+  [ -n "$template" ] || { echo "No Debian template found."; return 1; }
+  if ! pveam list "$var_template_storage" | grep -q "$template"; then
+    pveam download "$var_template_storage" "$template"
+  fi
+  echo "$template" >"$TEMPLATE_FILE"
+}
 
-say "Creating container $var_ctid ($var_hostname)"
 # Docker in an unprivileged container needs nesting and keyctl.
-pct create "$var_ctid" "$var_template_storage:vztmpl/$TEMPLATE" \
-  --hostname "$var_hostname" \
-  --cores "$var_cpu" \
-  --memory "$var_ram" \
-  --swap 512 \
-  --rootfs "$var_storage:$var_disk" \
-  --net0 "name=eth0,bridge=$var_brg,ip=dhcp" \
-  --features nesting=1,keyctl=1 \
-  --unprivileged 1 \
-  --onboot 1 \
-  --tags casazapp-tv \
-  --description "CasaZapp TV server: https://casazapp.tv" >/dev/null
-if ! pct start "$var_ctid"; then
-  fail "container $var_ctid was made but doesn't start. See why with: pct start $var_ctid --debug
-       Remove it with: pct destroy $var_ctid"
-fi
+create_container() {
+  pct create "$var_ctid" "$var_template_storage:vztmpl/$(cat "$TEMPLATE_FILE")" \
+    --hostname "$var_hostname" \
+    --cores "$var_cpu" \
+    --memory "$var_ram" \
+    --swap 512 \
+    --rootfs "$var_storage:$var_disk" \
+    --net0 "name=eth0,bridge=$var_brg,ip=dhcp" \
+    --features nesting=1,keyctl=1 \
+    --unprivileged 1 \
+    --onboot 1 \
+    --tags casazapp-tv \
+    --description "CasaZapp TV server: https://casazapp.tv"
+}
 
-# From here on the details go to a log; the screen shows the steps only.
-LOG="/tmp/casazapp-tv-install-$var_ctid.log"
-: > "$LOG"
+start_container() {
+  pct start "$var_ctid" && return 0
+  echo "Container $var_ctid was made but doesn't start."
+  echo "See why with: pct start $var_ctid --debug"
+  echo "Remove it with: pct destroy $var_ctid"
+  return 1
+}
 
 # A command in the container, with a locale that exists there (the one from an SSH session may not).
 in_ct() { pct exec "$var_ctid" -- env LANG=C.UTF-8 LC_ALL=C.UTF-8 DEBIAN_FRONTEND=noninteractive bash -c "$1"; }
 
-# Runs a step; on failure shows the end of the log and stops.
-step() {
-  local title=$1 command=$2
-  say "$title"
-  if ! in_ct "$command" >>"$LOG" 2>&1; then
-    tail -n 20 "$LOG" >&2
-    fail "$title failed. The whole log is in $LOG"
-  fi
+wait_network() {
+  for _ in $(seq 1 30); do
+    if [ -n "$(in_ct 'hostname -I' 2>/dev/null)" ] && in_ct "getent hosts raw.githubusercontent.com" >/dev/null 2>&1; then
+      return 0
+    fi
+    sleep 2
+  done
+  echo "The container got no IP address or can't reach the internet (DHCP on $var_brg?)"
+  return 1
 }
 
-say "Waiting for the network"
-IP=""
-for _ in $(seq 1 30); do
-  IP=$(pct exec "$var_ctid" -- hostname -I 2>/dev/null | awk '{ print $1 }') || true
-  if [ -n "$IP" ] && pct exec "$var_ctid" -- getent hosts raw.githubusercontent.com >/dev/null 2>&1; then break; fi
-  sleep 2
-done
-[ -n "$IP" ] || fail "the container got no IP address (DHCP on $var_brg?)"
-
-step "Updating the container" "apt-get update -q && apt-get upgrade -y -q && apt-get install -y -q curl ca-certificates"
-step "Installing Docker" "curl -fsSL https://get.docker.com | sh"
-
+header
+task "Getting the Debian template" get_template
+task "Creating container $var_ctid ($var_hostname)" create_container
+task "Starting the container" start_container
+task "Waiting for the network" wait_network
+task "Updating the container" in_ct "apt-get update -q && apt-get upgrade -y -q && apt-get install -y -q curl ca-certificates"
+task "Installing Docker" in_ct "curl -fsSL https://get.docker.com | sh"
 # The server runs as user 1000 in its image; Docker would make these folders for root.
-step "Setting up CasaZapp TV" "mkdir -p $APP_DIR/data $APP_DIR/recordings $APP_DIR/cache \
+task "Setting up CasaZapp TV" in_ct "mkdir -p $APP_DIR/data $APP_DIR/recordings $APP_DIR/cache \
   && chown -R 1000:1000 $APP_DIR/data $APP_DIR/recordings $APP_DIR/cache \
   && cd $APP_DIR \
   && curl -fsSLO $REPO_RAW/deployment/docker-compose.yml \
   && printf 'PUBLIC_URL=%s\nTRUST_PROXY=%s\nMDNS_NAME=%s\n' '$var_public_url' '$var_trust_proxy' '$var_mdns_name' > .env \
   && docker compose up -d --quiet-pull"
+task "Checking running state" wait_health in_ct
+rm -f "$TEMPLATE_FILE"
 
-say "Checking that it runs"
-for _ in $(seq 1 30); do
-  if in_ct "curl -fsS http://127.0.0.1:8080/api/health" >/dev/null 2>&1; then RUNNING=yes; break; fi
-  sleep 2
-done
-if [ "${RUNNING:-}" != yes ]; then
-  in_ct "docker logs casazapp-tv --tail 20" >&2 || true
-  fail "the server doesn't answer. Its log is above; the install log is in $LOG"
-fi
-
-say "Finished"
+IP=$(in_ct 'hostname -I' | awk '{ print $1 }')
 cat <<EOF
 
-  CasaZapp TV runs in container $var_ctid.
+  ${BOLD}CasaZapp TV runs in container $var_ctid.${RESET}
 
-  Open:     http://$IP:8080   (or http://$var_mdns_name.local:8080 on your home network)
-  Folder:   $APP_DIR in the container (compose file, .env, data, recordings)
-  Update:   run the same install line in the container's console (pct enter $var_ctid)
+  Open      ${ORANGE}http://$IP:8080${RESET}
+            http://$var_mdns_name.local:8080 on your home network
+            https://connect.casazapp.tv remembers your server in this browser
+  Guide     https://casazapp.tv/server
+  Update    run the same install line in the container (pct enter $var_ctid)
 
 EOF
