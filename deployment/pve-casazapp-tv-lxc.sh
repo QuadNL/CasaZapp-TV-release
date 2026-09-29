@@ -27,49 +27,9 @@ RESET=$'\033[0m'
 
 fail() { printf '\n  %s%s%s\n\n' "$RED" "$*" "$RESET" >&2; exit 1; }
 
-# The logo as 16 by 16 pixels (o the orange tile, # the house and play button), drawn two pixel
-# rows per line with half blocks, and the name beside it; line by line.
-LOGO=(
-  "  oooooooooooo  "
-  " oooooooooooooo "
-  "oooooooooooooooo"
-  "ooooooo##ooooooo"
-  "ooooo##oo##ooooo"
-  "oooo##oooo##oooo"
-  "ooo##oooooo##ooo"
-  "ooo#oooooooo#ooo"
-  "ooo#ooo#oooo#ooo"
-  "ooo#ooo##ooo#ooo"
-  "ooo#ooo###oo#ooo"
-  "ooo#ooo##ooo#ooo"
-  "ooo#ooo#oooo#ooo"
-  "ooo##########ooo"
-  " oooooooooooooo "
-  "  oooooooooooo  "
-)
-
-pixel_color() { case $1 in o) echo "255;181;71" ;; '#') echo "26;18;4" ;; esac; }
-
-logo_line() {
-  local top=${LOGO[$1]} bottom=${LOGO[$1 + 1]} line="" c t b
-  for ((c = 0; c < ${#top}; c++)); do
-    t=${top:c:1}
-    b=${bottom:c:1}
-    if [ "$t" = " " ] && [ "$b" = " " ]; then
-      line+="$RESET "
-    elif [ "$t" = " " ]; then
-      line+=$'\033[0;38;2;'"$(pixel_color "$b")m▄"
-    elif [ "$b" = " " ]; then
-      line+=$'\033[0;38;2;'"$(pixel_color "$t")m▀"
-    else
-      line+=$'\033[38;2;'"$(pixel_color "$t")"$'m\033[48;2;'"$(pixel_color "$b")m▀"
-    fi
-  done
-  printf '%s%s' "$line" "$RESET"
-}
-
+# The name, line by line: CasaZapp in white, TV in orange as in the logo.
 header() {
-  local text row name
+  local text line
   mapfile -t text <<'EOF'
   ___               ____                 _______   __
  / __|__ _ ___ __ _|_  /__ _ _ __ _ __  |_   _\ \ / /
@@ -79,14 +39,33 @@ header() {
 EOF
   if [ -t 1 ]; then clear; fi
   echo
-  # Eight lines of logo; the five of the name in the middle of them.
-  for row in 0 1 2 3 4 5 6 7; do
-    name=""
-    if [ "$row" -ge 2 ] && [ "$row" -le 6 ]; then name=${text[row - 2]}; fi
-    printf '  %s   %s%s%s\n' "$(logo_line $((row * 2)))" "$BOLD" "$name" "$RESET"
-    if [ -t 1 ]; then sleep 0.05; fi
+  for line in "${text[@]}"; do
+    # "CasaZapp" takes the first 39 columns.
+    printf '  %s%s%s%s%s\n' "$BOLD" "${line:0:39}" "$ORANGE" "${line:39}" "$RESET"
+    if [ -t 1 ]; then sleep 0.06; fi
   done
-  printf '\n  %sThe best TV player, in your home.%s\n\n' "$DIM" "$RESET"
+  printf '  %s%s%s\n' "$ORANGE" "─────────────────────────────────────────────────────" "$RESET"
+  printf '  %sThe best TV player, in your home.%s\n\n' "$DIM" "$RESET"
+}
+
+# A label and a value, lined up, for the summary before the steps.
+setting() { printf '  %s%-10s%s %s\n' "$DIM" "$1" "$RESET" "$2"; }
+
+# A box with rounded corners around the given lines, as wide as the longest one; colour codes in a
+# line don't count for the width.
+box() {
+  local title=$1 line plain width=${#1}
+  shift
+  for line in "$@"; do
+    plain=$(printf '%s' "$line" | sed 's/\x1b\[[0-9;]*m//g')
+    [ "${#plain}" -gt "$width" ] && width=${#plain}
+  done
+  printf '  %s╭─ %s%s%s %s╮%s\n' "$ORANGE" "$BOLD" "$title" "$RESET$ORANGE" "$(printf '─%.0s' $(seq 1 $((width + 1 - ${#title}))))" "$RESET"
+  for line in "$@"; do
+    plain=$(printf '%s' "$line" | sed 's/\x1b\[[0-9;]*m//g')
+    printf '  %s│%s  %s%*s  %s│%s\n' "$ORANGE" "$RESET" "$line" $((width - ${#plain})) "" "$ORANGE" "$RESET"
+  done
+  printf '  %s╰%s╯%s\n' "$ORANGE" "$(printf '─%.0s' $(seq 1 $((width + 4))))" "$RESET"
 }
 
 # One step: a spinner while it runs, then a tick. Its output goes to the log; on failure the end of
@@ -198,7 +177,9 @@ if ! command -v pct >/dev/null && [ -f "$APP_DIR/docker-compose.yml" ]; then
     && chown -R 1000:1000 data recordings cache \
     && docker compose pull && docker compose up -d && docker image prune -f"
   task "Checking running state" wait_health here
-  printf '\n  %sCasaZapp TV is up to date.%s\n\n' "$BOLD" "$RESET"
+  echo
+  box "CasaZapp TV is up to date" "Guide    https://casazapp.tv/server"
+  echo
   exit 0
 fi
 command -v pct >/dev/null && command -v pveam >/dev/null || fail "pct and pveam not found: run this on a Proxmox VE host."
@@ -312,6 +293,11 @@ wait_network() {
 }
 
 header
+setting "Container" "$var_ctid ($var_hostname), $var_cpu cores, $var_ram MB"
+setting "Disk" "$var_disk GB on $var_storage"
+setting "Network" "$var_brg, DHCP, $var_mdns_name.local"
+if [ -n "$var_public_url" ]; then setting "Address" "$var_public_url"; fi
+echo
 task "Getting the Debian template" get_template
 task "Creating container $var_ctid ($var_hostname)" create_container
 task "Starting the container" start_container
@@ -329,14 +315,6 @@ task "Checking running state" wait_health in_ct
 rm -f "$TEMPLATE_FILE"
 
 IP=$(in_ct 'hostname -I' | awk '{ print $1 }')
-cat <<EOF
-
-  ${BOLD}CasaZapp TV runs in container $var_ctid.${RESET}
-
-  Open      ${ORANGE}http://$IP:8080${RESET}
-            http://$var_mdns_name.local:8080 on your home network
-            https://connect.casazapp.tv remembers your server in this browser
-  Guide     https://casazapp.tv/server
-  Update    run the same install line in the container (pct enter $var_ctid)
-
-EOF
+echo
+box "CasaZapp TV is running"   "Open     ${ORANGE}http://$IP:8080${RESET}"   "         http://$var_mdns_name.local:8080 on your home network"   "Connect  https://connect.casazapp.tv"   "Guide    https://casazapp.tv/server"   "Update   run the same line in the container (pct enter $var_ctid)"
+echo
