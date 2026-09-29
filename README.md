@@ -25,6 +25,25 @@ Everything you need is here:
   [The Android app](docs/android.md) shows how to install it.
 - **Website:** [casazapp.tv](https://casazapp.tv).
 
+## Quick start
+
+**Proxmox:** run this in the shell of your Proxmox host. It makes a container with the server in it;
+later, type `update` in that container's console to update.
+
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/QuadNL/CasaZapp-TV-release/main/deployment/pve-casazapp-tv-lxc.sh)"
+```
+
+**Docker:** anywhere Docker runs, with [the compose file](deployment/docker-compose.yml):
+
+```bash
+mkdir casazapp-tv && cd casazapp-tv
+curl -fsSLO https://raw.githubusercontent.com/QuadNL/CasaZapp-TV-release/main/deployment/docker-compose.yml
+docker compose up -d
+```
+
+Then open `http://<your-server>:8080`. [Installing the server](docs/server.md) has the details.
+
 ## What it does
 
 - Live TV with a programme guide, your own channel lists and favourites, and search across
@@ -45,7 +64,8 @@ for, or from a legal free source.
 
 ## Getting started
 
-1. [Install the server](docs/server.md) with Docker. It takes a few minutes.
+1. [Install the server](docs/server.md) with the Proxmox script or Docker (see Quick start). It
+   takes a few minutes.
 2. Open it in a browser, sign in, and add your playlist.
 3. [Install the Android app](docs/android.md) on your TV or phone and pair it with a code.
 
@@ -53,7 +73,7 @@ Questions that come up often are in the [FAQ](docs/faq.md).
 
 ## Versions
 
-Server and app share the first two numbers: server 0.4.x works with app 0.4.x. The last number
+Server and app share the first two numbers: server 0.5.x works with app 0.5.x. The last number
 moves on its own for fixes. What changed is in the [changelog](CHANGELOG.md).
 
 ## Problems and ideas
