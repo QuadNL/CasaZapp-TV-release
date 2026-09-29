@@ -1,41 +1,34 @@
 # Installing the server
 
-The server runs as one Docker container. Anything that runs Docker will do: a NAS, a small
-Linux box, a Proxmox LXC, a Raspberry Pi 4 or newer (64-bit).
+There are two ways to run the server, both with Docker underneath:
 
-## What you need
+- **[Proxmox script](#proxmox-script):** one line in the shell of your Proxmox host makes a
+  container with everything in it.
+- **[Docker](#docker):** on anything that runs Docker, such as a NAS, a small Linux box or a
+  Raspberry Pi 4 or newer (64-bit).
 
+## Proxmox script
+
+Run this in the shell of your Proxmox host. It makes a Debian container with Docker and starts the
+server in it. Choose "Default settings", or "Advanced settings" to pick the ID, disk size, network
+bridge, a fixed IP address and more:
+
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/QuadNL/CasaZapp-TV-release/main/deployment/pve-casazapp-tv-lxc.sh)"
+```
+
+Read [the script](https://github.com/QuadNL/CasaZapp-TV-release/blob/main/deployment/pve-casazapp-tv-lxc.sh)
+first if you like. To update later, open the container's console (or `pct enter <ID>` on the host)
+and type `update`.
+
+## Docker
+
+### What you need
 - Docker with the compose plugin.
 - About 300 MB for the image, plus room for the database (usually well under 1 GB).
 - Room for recordings, if you use them. An hour of HD is roughly 1 to 3 GB.
 
-## The image
-
-The server is `ghcr.io/quadnl/casazapp-tv-release`, for `amd64` and `arm64`
-([all versions](https://github.com/QuadNL/CasaZapp-TV-release/pkgs/container/casazapp-tv-release)).
-
-| Tag      | Follows                                    |
-| -------- | ------------------------------------------ |
-| `latest` | The newest release                         |
-| `0.5`    | The newest 0.5 release, not the next minor |
-| `0.5.3`  | Exactly that version (any version number)  |
-
-## Folders
-
-The container uses three folders. Give each its own mount, so a full recordings disk can't take
-the database down with it.
-
-| In the container | Contents                                          | Back it up? |
-| ---------------- | ------------------------------------------------- | ----------- |
-| `/data`          | Database, encryption key, channel logos           | Yes         |
-| `/recordings`    | Recordings                                        | If you like |
-| `/cache`         | Pause and cast buffers; cleared at start          | No          |
-
-`/recordings` and `/cache` are only used when `RECORDINGS_DIR` and `CACHE_DIR` point there, as in
-the compose file below. Without them everything lives under `/data`.
-
-## Quick start
-
+### Quick start
 ```bash
 mkdir casazapp-tv && cd casazapp-tv
 curl -fsSLO https://raw.githubusercontent.com/QuadNL/CasaZapp-TV-release/main/deployment/docker-compose.yml
@@ -53,22 +46,7 @@ EOF
 docker compose up -d
 ```
 
-## On Proxmox
-
-Run this in the shell of your Proxmox host. It makes a Debian container with Docker and starts the
-server in it. Choose "Default settings", or "Advanced settings" to pick the ID, disk size, network
-bridge, a fixed IP address and more:
-
-```bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/QuadNL/CasaZapp-TV-release/main/deployment/pve-casazapp-tv-lxc.sh)"
-```
-
-Read [the script](https://github.com/QuadNL/CasaZapp-TV-release/blob/main/deployment/pve-casazapp-tv-lxc.sh)
-first if you like. To update later, open the container's console (or `pct enter <ID>` on the host)
-and type `update`.
-
-## docker-compose.yml
-
+### docker-compose.yml
 The file from the quick start, [`deployment/docker-compose.yml`](https://github.com/QuadNL/CasaZapp-TV-release/blob/main/deployment/docker-compose.yml)
 in the release repo:
 
@@ -114,6 +92,29 @@ host network, for example on Docker Desktop? Replace that line with:
 
 `TZ`, `TRUST_PROXY`, `PUBLIC_URL` and `MDNS_NAME` can go in `.env`; any other setting from
 [Settings](#settings) goes under `environment:`.
+
+### The image
+The server is `ghcr.io/quadnl/casazapp-tv-release`, for `amd64` and `arm64`
+([all versions](https://github.com/QuadNL/CasaZapp-TV-release/pkgs/container/casazapp-tv-release)).
+
+| Tag      | Follows                                    |
+| -------- | ------------------------------------------ |
+| `latest` | The newest release                         |
+| `0.5`    | The newest 0.5 release, not the next minor |
+| `0.5.3`  | Exactly that version (any version number)  |
+
+### Folders
+The container uses three folders. Give each its own mount, so a full recordings disk can't take
+the database down with it.
+
+| In the container | Contents                                          | Back it up? |
+| ---------------- | ------------------------------------------------- | ----------- |
+| `/data`          | Database, encryption key, channel logos           | Yes         |
+| `/recordings`    | Recordings                                        | If you like |
+| `/cache`         | Pause and cast buffers; cleared at start          | No          |
+
+`/recordings` and `/cache` are only used when `RECORDINGS_DIR` and `CACHE_DIR` point there, as in
+the compose file above. Without them everything lives under `/data`.
 
 ## First start
 
@@ -205,13 +206,16 @@ started it.
 
 ## Updating
 
-When a newer server is out, Settings → About shows "Update available" under the server version,
-with what's new. For that the server asks GitHub for the list of releases every six hours.
+With the Proxmox script: open the container's console (or `pct enter <ID>` on the host) and type
+`update`. With Docker, in the folder with the compose file:
 
 ```bash
 docker compose pull
 docker compose up -d
 ```
+
+When a newer server is out, Settings → About shows "Update available" under the server version,
+with what's new. For that the server asks GitHub for the list of releases every six hours.
 
 ## Backups and moving
 
