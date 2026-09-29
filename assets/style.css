@@ -127,9 +127,13 @@ code { font-family: ui-monospace, Consolas, monospace; font-size: 0.9em; }
 .shot.tall { aspect-ratio: 9 / 19.5; border-radius: 20px; }
 figcaption { color: var(--muted); font-size: 0.9rem; margin-top: 10px; }
 
-.steps { list-style: none; padding: 0; margin: 28px 0 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-@media (max-width: 800px) { .steps { grid-template-columns: 1fr; } }
-.steps li { border: 1px solid var(--line); border-radius: 16px; padding: 22px; background: var(--surface); }
+.steps { list-style: none; padding: 0; margin: 28px 0 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+@media (max-width: 1000px) { .steps { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px) { .steps { grid-template-columns: 1fr; } }
+.steps li { border: 1px solid var(--line); border-radius: 16px; padding: 22px; background: var(--surface); display: flex; flex-direction: column; }
+.steps .btn { align-self: flex-start; margin-top: auto; flex-direction: row; align-items: center; gap: 8px; min-height: 44px; }
+.steps p + .btn { margin-top: 16px; }
+.ext { width: 1.05em; height: 1.05em; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 .steps p { color: #b6c0cd; margin: 0; }
 .num {
   display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%;

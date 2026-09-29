@@ -75,8 +75,12 @@ screens:
 
 steps_title: How it works
 steps:
-  - title: Run the server
+  - title: Install your CasaZapp TV server
     text: One Docker container on a NAS, Proxmox LXC or a Raspberry Pi. It keeps your playlists, fetches the guide and records.
+  - title: Connect to your CasaZapp TV server
+    text: Open your server from any browser. On your home network it is found by name, and your server is remembered.
+    button: Open Connect
+    url: https://connect.casazapp.tv
   - title: Add your playlist
     text: Sign in from a browser and add your Xtream or M3U playlist. Pick the channels and categories you want.
   - title: Pair your screens
