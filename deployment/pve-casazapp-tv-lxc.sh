@@ -27,16 +27,49 @@ RESET=$'\033[0m'
 
 fail() { printf '\n  %s%s%s\n\n' "$RED" "$*" "$RESET" >&2; exit 1; }
 
-# The logo and the name, line by line.
+# The logo as 16 by 16 pixels (o the orange tile, # the house and play button), drawn two pixel
+# rows per line with half blocks, and the name beside it; line by line.
+LOGO=(
+  "  oooooooooooo  "
+  " oooooooooooooo "
+  "oooooooooooooooo"
+  "ooooooo##ooooooo"
+  "ooooo##oo##ooooo"
+  "oooo##oooo##oooo"
+  "ooo##oooooo##ooo"
+  "ooo#oooooooo#ooo"
+  "ooo#ooo#oooo#ooo"
+  "ooo#ooo##ooo#ooo"
+  "ooo#ooo###oo#ooo"
+  "ooo#ooo##ooo#ooo"
+  "ooo#ooo#oooo#ooo"
+  "ooo##########ooo"
+  " oooooooooooooo "
+  "  oooooooooooo  "
+)
+
+pixel_color() { case $1 in o) echo "255;181;71" ;; '#') echo "26;18;4" ;; esac; }
+
+logo_line() {
+  local top=${LOGO[$1]} bottom=${LOGO[$1 + 1]} line="" c t b
+  for ((c = 0; c < ${#top}; c++)); do
+    t=${top:c:1}
+    b=${bottom:c:1}
+    if [ "$t" = " " ] && [ "$b" = " " ]; then
+      line+="$RESET "
+    elif [ "$t" = " " ]; then
+      line+=$'\033[0;38;2;'"$(pixel_color "$b")m▄"
+    elif [ "$b" = " " ]; then
+      line+=$'\033[0;38;2;'"$(pixel_color "$t")m▀"
+    else
+      line+=$'\033[38;2;'"$(pixel_color "$t")"$'m\033[48;2;'"$(pixel_color "$b")m▀"
+    fi
+  done
+  printf '%s%s' "$line" "$RESET"
+}
+
 header() {
-  local logo text i
-  mapfile -t logo <<'EOF'
-╭──────────╮
-│    ╱╲    │
-│   ╱  ╲   │
-│   │▶ │   │
-╰──────────╯
-EOF
+  local text row name
   mapfile -t text <<'EOF'
   ___               ____                 _______   __
  / __|__ _ ___ __ _|_  /__ _ _ __ _ __  |_   _\ \ / /
@@ -46,9 +79,12 @@ EOF
 EOF
   if [ -t 1 ]; then clear; fi
   echo
-  for i in 0 1 2 3 4; do
-    printf '  %s%s%s  %s%s%s\n' "$ORANGE" "${logo[i]}" "$RESET" "$BOLD" "${text[i]}" "$RESET"
-    if [ -t 1 ]; then sleep 0.07; fi
+  # Eight lines of logo; the five of the name in the middle of them.
+  for row in 0 1 2 3 4 5 6 7; do
+    name=""
+    if [ "$row" -ge 2 ] && [ "$row" -le 6 ]; then name=${text[row - 2]}; fi
+    printf '  %s   %s%s%s\n' "$(logo_line $((row * 2)))" "$BOLD" "$name" "$RESET"
+    if [ -t 1 ]; then sleep 0.05; fi
   done
   printf '\n  %sThe best TV player, in your home.%s\n\n' "$DIM" "$RESET"
 }
