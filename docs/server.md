@@ -38,7 +38,7 @@ the compose file below. Without them everything lives under `/data`.
 
 ```bash
 mkdir casazapp-tv && cd casazapp-tv
-curl -fsSLO https://casazapp.tv/docker-compose.yml
+curl -fsSLO https://raw.githubusercontent.com/QuadNL/CasaZapp-TV-release/main/deployment/docker-compose.yml
 docker compose up -d
 ```
 
@@ -55,7 +55,8 @@ docker compose up -d
 
 ## docker-compose.yml
 
-The file from the quick start:
+The file from the quick start, [`deployment/docker-compose.yml`](https://github.com/QuadNL/CasaZapp-TV-release/blob/main/deployment/docker-compose.yml)
+in the release repo:
 
 ```yaml
 # CasaZapp TV server. See casazapp.tv/server for what each line does.
