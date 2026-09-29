@@ -115,7 +115,7 @@ jobs:
           docker buildx imagetools create \
             -t "$TARGET:$VERSION" -t "$TARGET:${VERSION%.*}" -t "$TARGET:latest" \
             --annotation "index:org.opencontainers.image.source=https://github.com/QuadNL/CasaZapp-TV-release" \
-            --annotation "index:org.opencontainers.image.description=CasaZapp TV server: your own TV player, on your own server." \
+            --annotation "index:org.opencontainers.image.description=CasaZapp TV server: the best TV player, in your home." \
             --annotation "index:org.opencontainers.image.url=https://casazapp.tv" \
             --annotation "index:org.opencontainers.image.version=$VERSION" \
             "$SOURCE:$VERSION"
