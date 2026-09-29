@@ -17,6 +17,9 @@ set -euo pipefail
 REPO_RAW="https://raw.githubusercontent.com/QuadNL/CasaZapp-TV-release/main"
 APP_DIR="/opt/casazapp-tv"
 LOG="/tmp/casazapp-tv-install.log"
+# What an install and every update leave behind: packages no longer needed, downloaded packages,
+# old server images.
+CLEANUP="DEBIAN_FRONTEND=noninteractive apt-get autoremove -y -q && apt-get clean && docker image prune -f"
 
 ORANGE=$'\033[38;5;215m'
 GREEN=$'\033[32m'
@@ -175,8 +178,9 @@ if ! command -v pct >/dev/null && [ -f "$APP_DIR/docker-compose.yml" ]; then
   # The server runs as user 1000; folders made for root by an older version of this script get fixed.
   task "Updating CasaZapp TV" here "cd $APP_DIR && mkdir -p data recordings cache \
     && chown -R 1000:1000 data recordings cache \
-    && docker compose pull && docker compose up -d && docker image prune -f"
+    && docker compose pull && docker compose up -d"
   task "Checking running state" wait_health here
+  task "Cleaning up" here "$CLEANUP"
   echo
   box "CasaZapp TV is up to date" "Guide    https://casazapp.tv/server"
   echo
@@ -266,6 +270,7 @@ create_container() {
     --features nesting=1,keyctl=1 \
     --unprivileged 1 \
     --onboot 1 \
+    --timezone host \
     --tags casazapp-tv \
     --description "CasaZapp TV server: https://casazapp.tv"
 }
@@ -294,7 +299,7 @@ wait_network() {
 
 header
 # The command "update" in the container, and a line about it when you log in there.
-add_update_command() {
+optimize_container() {
   local tmp
   tmp=$(mktemp)
   cat >"$tmp" <<EOF
@@ -318,6 +323,8 @@ setting "Disk" "$var_disk GB on $var_storage"
 setting "Network" "$var_brg, DHCP, $var_mdns_name.local"
 if [ -n "$var_public_url" ]; then setting "Address" "$var_public_url"; fi
 echo
+# The host's time zone, for the guide and recordings (the container gets it too, --timezone host).
+HOST_TZ=$(timedatectl show -p Timezone --value 2>/dev/null || cat /etc/timezone 2>/dev/null || echo UTC)
 task "Getting the Debian template" get_template
 task "Creating container $var_ctid ($var_hostname)" create_container
 task "Starting the container" start_container
@@ -329,11 +336,12 @@ task "Setting up CasaZapp TV" in_ct "mkdir -p $APP_DIR/data $APP_DIR/recordings 
   && chown -R 1000:1000 $APP_DIR/data $APP_DIR/recordings $APP_DIR/cache \
   && cd $APP_DIR \
   && curl -fsSLO $REPO_RAW/deployment/docker-compose.yml \
-  && printf 'PUBLIC_URL=%s\nTRUST_PROXY=%s\nMDNS_NAME=%s\n' '$var_public_url' '$var_trust_proxy' '$var_mdns_name' > .env \
+  && printf 'TZ=%s\nPUBLIC_URL=%s\nTRUST_PROXY=%s\nMDNS_NAME=%s\n' '$HOST_TZ' '$var_public_url' '$var_trust_proxy' '$var_mdns_name' > .env \
   && docker compose up -d --quiet-pull"
 task "Checking running state" wait_health in_ct
-# "update" in the container runs this script again there, as with the community scripts.
-task "Adding the update command" add_update_command
+# The "update" command (it runs this script again in the container) and the login message.
+task "Optimizing the container configuration" optimize_container
+task "Cleaning up" in_ct "$CLEANUP"
 rm -f "$TEMPLATE_FILE"
 
 IP=$(in_ct 'hostname -I' | awk '{ print $1 }')
