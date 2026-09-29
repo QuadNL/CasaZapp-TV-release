@@ -342,6 +342,9 @@ EOF
 EOF
   pct push "$var_ctid" "$tmp" /etc/motd --perms 0644
   rm -f "$tmp"
+  # "pct enter" opens no login shell, so the login message would be skipped there; a login (console,
+  # SSH) shows it already.
+  in_ct "grep -q casazapp-motd /root/.bashrc || printf '\n# casazapp-motd\nshopt -q login_shell || cat /etc/motd\n' >> /root/.bashrc"
   # The host's locale in the container too: a console or SSH session brings it along, and without it
   # every shell there warns "setlocale: cannot change locale".
   local locale=${LC_ALL:-${LANG:-en_US.UTF-8}}
