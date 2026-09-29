@@ -18,7 +18,7 @@ The server is `ghcr.io/quadnl/casazapp-tv-release`, for `amd64` and `arm64`
 | -------- | ------------------------------------------ |
 | `latest` | The newest release                         |
 | `0.5`    | The newest 0.5 release, not the next minor |
-| `0.5.2`  | Exactly that version (any version number)  |
+| `0.5.3`  | Exactly that version (any version number)  |
 
 ## Folders
 
@@ -37,14 +37,10 @@ the compose file below. Without them everything lives under `/data`.
 ## Quick start
 
 ```bash
-mkdir -p casazapp-tv/data casazapp-tv/recordings casazapp-tv/cache && cd casazapp-tv
-chown -R 1000:1000 data recordings cache   # with sudo if you are not root
+mkdir casazapp-tv && cd casazapp-tv
 curl -fsSLO https://raw.githubusercontent.com/QuadNL/CasaZapp-TV-release/main/deployment/docker-compose.yml
 docker compose up -d
 ```
-
-The server runs as user 1000 in the container, so the second line gives it its folders. Without
-it Docker makes them for root and the server can't open its database.
 
 That's it: open `http://<your-server>:8080`. Using your own domain behind a reverse proxy? Put
 your settings in a `.env` file next to the compose file and start again:
