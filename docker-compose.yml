@@ -3,8 +3,11 @@ services:
   casazapp-tv:
     image: ghcr.io/quadnl/casazapp-tv-release:latest
     container_name: casazapp-tv
-    ports:
-      - "8080:8080"
+    # Host network, so apps find the server as casazapp.local. It listens on port 8080.
+    network_mode: host
+    # Without host network (for example Docker Desktop), use this instead:
+    # ports:
+    #   - "8080:8080"
     environment:
       TZ: Europe/Amsterdam
       RECORDINGS_DIR: /recordings

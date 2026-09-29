@@ -41,8 +41,7 @@ services:
   casazapp-tv:
     image: ghcr.io/quadnl/casazapp-tv-release:latest
     container_name: casazapp-tv
-    ports:
-      - "8080:8080"
+    network_mode: host
     environment:
       TZ: Europe/Amsterdam
       RECORDINGS_DIR: /recordings
@@ -56,6 +55,15 @@ services:
       - ./recordings:/recordings
       - ./cache:/cache
     restart: unless-stopped
+```
+
+With `network_mode: host` the server listens on port 8080 of the host itself (`PORT` changes
+it) and apps find it by name, see [Find it by name](#find-it-by-name-on-your-network). Can't use
+host network, for example on Docker Desktop? Replace that line with:
+
+```yaml
+    ports:
+      - "8080:8080"
 ```
 
 Start it:
@@ -111,20 +119,14 @@ enter them again. Keep `/data` in your backup and you're fine.
 The server announces itself as `casazapp.local`. The Android app then lists it on its connect
 screen, and a browser on a PC or Mac can open `http://casazapp.local:8080`.
 
-Docker keeps that announcement inside the container unless the container uses the host network:
-
-```yaml
-services:
-  casazapp-tv:
-    image: ghcr.io/quadnl/casazapp-tv-release:latest
-    network_mode: host
-    # ports: is ignored with host network; the server listens on 8080 (PORT to change it)
-```
+This needs `network_mode: host`, as in the compose file above: with `ports:` Docker keeps the
+announcement inside the container.
 
 Set `PUBLIC_URL` to the address you use for the server (for example `https://tv.example.com`):
 the app then connects there instead of to the local IP, so it also works away from home.
 
-Without host network the Android app still finds the server: it scans your network for it.
+Without host network the Android app still finds the server: it scans your network for it. A
+browser can't, so there you type the IP address.
 
 Bookmark `connect.casazapp.tv` to open your server from any browser: it remembers the address in
 that browser.
