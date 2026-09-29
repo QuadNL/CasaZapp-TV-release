@@ -1,5 +1,32 @@
 # Changelog
 
+## 0.5.3 (September 2026)
+
+### Server
+
+Fixed:
+
+- New installs start without fixing folder permissions first
+- Allow the use of custom .local name for mDNS
+
+Changed:
+
+- Removed the maintenance announcement before a restart
+- Changed slogan
+
+## 0.5.2 (September 2026)
+
+### Server
+
+- Added update notice for new server versions
+- Added website link in about
+
+### Android app
+
+- Added update notice for new server version
+- Added website link in about
+- Fixed CasaZapp TV logo in portrait
+
 ## 0.5.1 (September 2026)
 
 ### Server
