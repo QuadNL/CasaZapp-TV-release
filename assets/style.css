@@ -47,10 +47,12 @@ code { font-family: ui-monospace, Consolas, monospace; font-size: 0.9em; }
 .top-row { display: flex; align-items: center; justify-content: space-between; height: 64px; gap: 16px; }
 .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font: 700 1.05rem 'Sora', sans-serif; }
 .mark { width: 32px; height: 32px; }
-.links { display: flex; gap: 22px; font-size: 0.95rem; }
+.links { display: flex; align-items: center; gap: 22px; font-size: 0.95rem; }
 .links a { text-decoration: none; color: var(--muted); }
 .links a:hover { color: var(--text); }
-@media (max-width: 560px) { .links a:nth-child(-n+2) { display: none; } }
+.links .top-btn { flex-direction: row; align-items: center; gap: 7px; min-height: 38px; padding: 6px 14px; font-size: 0.9rem; color: var(--ink); white-space: nowrap; }
+.links .top-btn:hover { color: var(--ink); filter: brightness(1.06); }
+@media (max-width: 560px) { .links a:nth-child(-n+2), .links a:nth-child(4) { display: none; } .links { gap: 14px; } }
 
 /* Hero */
 .hero { overflow-x: clip; padding: 72px 0 56px; background: radial-gradient(60% 70% at 75% 30%, #1e3a5f55, transparent 70%); }
