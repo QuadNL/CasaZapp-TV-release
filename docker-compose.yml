@@ -1,4 +1,7 @@
-# CasaZapp TV server. See docs/server.md for what each line does.
+# CasaZapp TV server. See casazapp.tv/server for what each line does.
+# Your own settings go in a .env file next to this one, for example:
+#   PUBLIC_URL=https://tv.example.com
+#   TRUST_PROXY=true
 services:
   casazapp-tv:
     image: ghcr.io/quadnl/casazapp-tv-release:latest
@@ -9,13 +12,13 @@ services:
     # ports:
     #   - "8080:8080"
     environment:
-      TZ: Europe/Amsterdam
+      TZ: ${TZ:-Europe/Amsterdam}
       RECORDINGS_DIR: /recordings
       CACHE_DIR: /cache
-      # Behind a reverse proxy (Nginx Proxy Manager, Caddy, Traefik):
-      # TRUST_PROXY: "true"
-      # The address you use for the server; apps that find it on the network connect there:
-      # PUBLIC_URL: https://tv.example.com
+      # true behind a reverse proxy (Nginx Proxy Manager, Caddy, Traefik)
+      TRUST_PROXY: ${TRUST_PROXY:-false}
+      # The address you use for the server; apps that find it on the network connect there
+      PUBLIC_URL: ${PUBLIC_URL:-}
     volumes:
       - ./data:/data
       - ./recordings:/recordings

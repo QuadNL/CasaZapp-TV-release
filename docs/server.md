@@ -34,22 +34,51 @@ the database down with it.
 `/recordings` and `/cache` are only used when `RECORDINGS_DIR` and `CACHE_DIR` point there, as in
 the compose file below. Without them everything lives under `/data`.
 
+## Quick start
+
+```bash
+mkdir casazapp-tv && cd casazapp-tv
+curl -fsSLO https://casazapp.tv/docker-compose.yml
+docker compose up -d
+```
+
+That's it: open `http://<your-server>:8080`. Using your own domain behind a reverse proxy? Put
+your settings in a `.env` file next to the compose file and start again:
+
+```bash
+cat > .env <<'EOF'
+PUBLIC_URL=https://tv.example.com
+TRUST_PROXY=true
+EOF
+docker compose up -d
+```
+
 ## docker-compose.yml
 
+The file from the quick start:
+
 ```yaml
+# CasaZapp TV server. See casazapp.tv/server for what each line does.
+# Your own settings go in a .env file next to this one, for example:
+#   PUBLIC_URL=https://tv.example.com
+#   TRUST_PROXY=true
 services:
   casazapp-tv:
     image: ghcr.io/quadnl/casazapp-tv-release:latest
     container_name: casazapp-tv
+    # Host network, so apps find the server as casazapp.local. It listens on port 8080.
     network_mode: host
+    # Without host network (for example Docker Desktop), use this instead:
+    # ports:
+    #   - "8080:8080"
     environment:
-      TZ: Europe/Amsterdam
+      TZ: ${TZ:-Europe/Amsterdam}
       RECORDINGS_DIR: /recordings
       CACHE_DIR: /cache
-      # Behind a reverse proxy:
-      # TRUST_PROXY: "true"
-      # The address you use for the server (see "Find it by name"):
-      # PUBLIC_URL: https://tv.example.com
+      # true behind a reverse proxy (Nginx Proxy Manager, Caddy, Traefik)
+      TRUST_PROXY: ${TRUST_PROXY:-false}
+      # The address you use for the server; apps that find it on the network connect there
+      PUBLIC_URL: ${PUBLIC_URL:-}
     volumes:
       - ./data:/data
       - ./recordings:/recordings
@@ -66,11 +95,8 @@ host network, for example on Docker Desktop? Replace that line with:
       - "8080:8080"
 ```
 
-Start it:
-
-```bash
-docker compose up -d
-```
+`TZ`, `TRUST_PROXY` and `PUBLIC_URL` can go in `.env`; any other setting from
+[Settings](#settings) goes under `environment:`.
 
 ## First start
 
