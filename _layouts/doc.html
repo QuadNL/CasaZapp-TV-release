@@ -10,6 +10,10 @@ layout: default
     <a class="doc-sub" href="{{ url | relative_url }}" {% if page.url == url %}aria-current="page"{% endif %}>{{ part[1] }}</a>
     {% endfor %}
     <a href="{{ '/docs/android.html' | relative_url }}" {% if page.url == '/docs/android.html' %}aria-current="page"{% endif %}>The Android app</a>
+    {% assign android_pages = "android-install:Installing,android-connect:Connecting,android-local:Without a server,android-remote:The remote" | split: "," %}
+    {% for item in android_pages %}{% assign part = item | split: ":" %}{% capture url %}/docs/{{ part[0] }}.html{% endcapture %}
+    <a class="doc-sub" href="{{ url | relative_url }}" {% if page.url == url %}aria-current="page"{% endif %}>{{ part[1] }}</a>
+    {% endfor %}
     <a href="{{ '/docs/faq.html' | relative_url }}" {% if page.url == '/docs/faq.html' %}aria-current="page"{% endif %}>Questions</a>
     <a href="{{ '/demo/' | relative_url }}" {% if page.url == '/demo/' %}aria-current="page"{% endif %}>Demo playlist</a>
     <a href="{{ '/CHANGELOG.html' | relative_url }}" {% if page.url == '/CHANGELOG.html' %}aria-current="page"{% endif %}>Changelog</a>
