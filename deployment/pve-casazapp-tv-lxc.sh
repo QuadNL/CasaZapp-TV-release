@@ -130,10 +130,12 @@ pct status "$var_ctid" >/dev/null 2>&1 && fail "container $var_ctid already exis
 
 say "Getting the newest Debian template"
 pveam update >/dev/null
-# Debian 13, or 12 on an older Proxmox that doesn't offer 13 yet.
+# Debian 13, or 12 on an older Proxmox that doesn't offer 13 yet, for this host's processor: the
+# list has amd64 and arm64 templates, and the wrong one can't start ("Exec format error").
+ARCH=$(dpkg --print-architecture)
 TEMPLATE=""
 for release in 13 12; do
-  TEMPLATE=$(pveam available --section system | awk -v r="^debian-$release-standard_" '$2 ~ r { print $2 }' | sort -V | tail -n 1)
+  TEMPLATE=$(pveam available --section system | awk -v r="^debian-$release-standard_.*_${ARCH}[.]tar" '$2 ~ r { print $2 }' | sort -V | tail -n 1)
   [ -n "$TEMPLATE" ] && break
 done
 [ -n "$TEMPLATE" ] || fail "no Debian template found"
@@ -155,7 +157,10 @@ pct create "$var_ctid" "$var_template_storage:vztmpl/$TEMPLATE" \
   --onboot 1 \
   --tags casazapp-tv \
   --description "CasaZapp TV server: https://casazapp.tv" >/dev/null
-pct start "$var_ctid"
+if ! pct start "$var_ctid"; then
+  fail "container $var_ctid was made but doesn't start. See why with: pct start $var_ctid --debug
+       Remove it with: pct destroy $var_ctid"
+fi
 
 say "Waiting for the network"
 IP=""
