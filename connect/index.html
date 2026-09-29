@@ -1,0 +1,152 @@
+---
+layout: default
+title: Open your server
+permalink: /connect/
+---
+<!-- connect.casazapp.tv lands here: it remembers your CasaZapp TV server(s) in this browser only. -->
+<section class="section">
+  <div class="wrap start">
+    <h1>Open your CasaZapp TV</h1>
+    <p class="sub">Your server's address is kept in this browser only. Nothing is sent anywhere.</p>
+
+    <div id="opening" class="start-card" hidden>
+      <p>Opening <b id="opening-url"></b>…</p>
+      <button type="button" class="btn" id="cancel">Cancel</button>
+    </div>
+
+    <!-- A browser page can't look for the server itself (an https page may not reach http), so
+         the name the server announces on the home network is offered as one click. -->
+    <div id="suggest" class="start-card" hidden>
+      <h3>On your home network?</h3>
+      <p class="start-hint">A server with host network answers as <code>casazapp.local</code>.</p>
+      <button type="button" class="btn btn-primary" id="try-local">Open casazapp.local:8080</button>
+    </div>
+
+    <div id="servers" class="start-card" hidden>
+      <h3>Your servers</h3>
+      <ul id="list" class="start-list"></ul>
+      <label class="start-check"><input type="checkbox" id="auto"> Open the first one straight away next time</label>
+    </div>
+
+    <form id="add" class="start-card">
+      <h3 id="add-title">Add your server</h3>
+      <label for="url">Address</label>
+      <input id="url" type="url" required placeholder="http://casazapp.local:8080" autocomplete="url">
+      <p class="start-hint">For example <code>http://casazapp.local:8080</code>, <code>http://192.168.1.10:8080</code> or your own domain.</p>
+      <p class="start-error" id="error" hidden></p>
+      <button type="submit" class="btn btn-primary">Save and open</button>
+    </form>
+  </div>
+</section>
+
+<style>
+  .start { max-width: 560px; display: flex; flex-direction: column; gap: 18px; padding-top: 24px; padding-bottom: 48px; }
+  .start-card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+  .start-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+  .start-list li { display: flex; align-items: center; gap: 10px; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
+  .start-list code { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .start-list button { padding: 7px 12px; font-size: 0.9rem; }
+  .start-check { display: flex; gap: 8px; align-items: center; color: var(--muted); font-size: 0.95rem; }
+  .start input[type="url"] { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 11px 13px; color: var(--text); font: inherit; }
+  .start label[for="url"] { font-size: 0.85rem; font-weight: 600; color: var(--muted); }
+  .start-hint { margin: 0; color: var(--muted); font-size: 0.9rem; }
+  .start-error { margin: 0; color: #ff6b78; font-size: 0.95rem; }
+  .start form .btn, #suggest .btn { align-self: flex-start; }
+</style>
+
+<script>
+  (function () {
+    var KEY = 'casazapp-servers';
+    var AUTO = 'casazapp-auto-open';
+    var load = function () {
+      try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch (e) { return []; }
+    };
+    var save = function (list) {
+      try { localStorage.setItem(KEY, JSON.stringify(list)); } catch (e) {}
+    };
+    var autoOn = function () {
+      try { return localStorage.getItem(AUTO) === '1'; } catch (e) { return false; }
+    };
+    var setAuto = function (on) {
+      try { on ? localStorage.setItem(AUTO, '1') : localStorage.removeItem(AUTO); } catch (e) {}
+    };
+    // Only the origin: http(s)://host[:port]; the web app lives at its root.
+    var normalise = function (raw) {
+      var text = raw.trim();
+      if (!/^https?:\/\//i.test(text)) text = 'http://' + text;
+      try {
+        var u = new URL(text);
+        if (u.protocol !== 'http:' && u.protocol !== 'https:') return null;
+        return u.origin;
+      } catch (e) { return null; }
+    };
+    var open = function (url) {
+      var list = load().filter(function (s) { return s !== url; });
+      list.unshift(url);
+      save(list);
+      window.location.href = url + '/';
+    };
+
+    var list = load();
+    var el = function (id) { return document.getElementById(id); };
+    var timer;
+
+    var LOCAL = 'http://casazapp.local:8080';
+    var render = function () {
+      list = load();
+      el('suggest').hidden = list.indexOf(LOCAL) !== -1;
+      el('servers').hidden = list.length === 0;
+      el('add-title').textContent = list.length ? 'Add another server' : 'Add your server';
+      el('auto').checked = autoOn();
+      var ul = el('list');
+      ul.innerHTML = '';
+      list.forEach(function (url) {
+        var li = document.createElement('li');
+        var code = document.createElement('code');
+        code.textContent = url;
+        var go = document.createElement('button');
+        go.className = 'btn btn-primary';
+        go.type = 'button';
+        go.textContent = 'Open';
+        go.onclick = function () { open(url); };
+        var del = document.createElement('button');
+        del.className = 'btn';
+        del.type = 'button';
+        del.textContent = 'Remove';
+        del.onclick = function () {
+          save(load().filter(function (s) { return s !== url; }));
+          render();
+        };
+        li.append(code, go, del);
+        ul.append(li);
+      });
+    };
+
+    el('auto').onchange = function (e) { setAuto(e.target.checked); };
+    el('try-local').onclick = function () { open(LOCAL); };
+    el('add').onsubmit = function (e) {
+      e.preventDefault();
+      var url = normalise(el('url').value);
+      if (!url) {
+        el('error').textContent = 'That doesn\'t look like an address. Try http://casazapp.local:8080.';
+        el('error').hidden = false;
+        return;
+      }
+      open(url);
+    };
+    el('cancel').onclick = function () {
+      clearTimeout(timer);
+      el('opening').hidden = true;
+      render();
+    };
+
+    render();
+    // Straight to the first server, with a moment to cancel.
+    if (autoOn() && list.length) {
+      el('opening-url').textContent = list[0];
+      el('opening').hidden = false;
+      el('servers').hidden = true;
+      timer = setTimeout(function () { window.location.href = list[0] + '/'; }, 1500);
+    }
+  })();
+</script>
