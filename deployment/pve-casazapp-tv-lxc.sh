@@ -14,6 +14,8 @@
 # Inside the container, "update" (which this script adds) updates the server.
 set -euo pipefail
 
+# This script's own version; raise it with every change.
+SCRIPT_VERSION="1.0.0"
 REPO_RAW="https://raw.githubusercontent.com/QuadNL/CasaZapp-TV-release/main"
 APP_DIR="/opt/casazapp-tv"
 LOG="/tmp/casazapp-tv-install.log"
@@ -48,7 +50,8 @@ EOF
     if [ -t 1 ]; then sleep 0.06; fi
   done
   printf '  %s%s%s\n' "$ORANGE" "─────────────────────────────────────────────────────" "$RESET"
-  printf '  %sThe best TV player, in your home.%s\n\n' "$DIM" "$RESET"
+  printf '  %sThe best TV player, in your home.%s\n' "$DIM" "$RESET"
+  printf '  %sProxmox installer %s%s\n\n' "$DIM" "$SCRIPT_VERSION" "$RESET"
 }
 
 # A label and a value, lined up, for the summary before the steps.
@@ -167,6 +170,14 @@ wait_health() {
   return 1
 }
 
+# The server's version as it reports it, e.g. "CasaZapp TV 0.5.2".
+server_version() {
+  local version
+  version=$($1 "curl -fsS http://127.0.0.1:8080/api/health" 2>/dev/null |
+    sed -n 's/.*"version":"v\{0,1\}\([^"]*\)".*/\1/p')
+  echo "CasaZapp TV ${version:-unknown}"
+}
+
 [ "$(id -u)" -eq 0 ] || fail "Run this as root."
 
 # Inside the container this script made: update the server, as the community scripts do.
@@ -182,7 +193,10 @@ if ! command -v pct >/dev/null && [ -f "$APP_DIR/docker-compose.yml" ]; then
   task "Checking running state" wait_health here
   task "Cleaning up" here "$CLEANUP"
   echo
-  box "CasaZapp TV is up to date" "Guide    https://casazapp.tv/server"
+  box "CasaZapp TV is up to date" \
+    "Version  $(server_version here)" \
+    "App      https://casazapp.tv/app (Android)" \
+    "Guide    https://casazapp.tv/server"
   echo
   exit 0
 fi
@@ -367,9 +381,11 @@ rm -f "$TEMPLATE_FILE"
 IP=$(in_ct 'hostname -I' | awk '{ print $1 }')
 echo
 box "CasaZapp TV is running" \
+  "Version  $(server_version in_ct)" \
   "Open     ${ORANGE}http://$IP:8080${RESET}" \
   "         http://$var_mdns_name.local:8080 on your home network" \
   "Connect  https://connect.casazapp.tv" \
+  "App      https://casazapp.tv/app (Android)" \
   "Guide    https://casazapp.tv/server" \
   "Update   open the container's console (pct enter $var_ctid) and type: update"
 echo
