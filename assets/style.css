@@ -178,6 +178,9 @@ figcaption { color: var(--muted); font-size: 0.9rem; margin-top: 10px; }
 .doc-nav a { text-decoration: none; color: var(--muted); padding: 7px 12px; border-radius: 10px; font-size: 0.95rem; }
 .doc-nav a:hover { color: var(--text); }
 .doc-nav a[aria-current='page'] { background: var(--raised); color: var(--text); }
+/* The server guide's own pages, under "Installing the server". */
+.doc-nav a.sub { margin-left: 14px; padding: 5px 12px; font-size: 0.88rem; }
+@media (max-width: 800px) { .doc-nav a.sub { margin-left: 0; } }
 .prose { max-width: 760px; }
 .prose h1 { font-size: 2.2rem; margin: 0 0 18px; }
 .prose h2 { font-size: 1.45rem; margin: 36px 0 12px; }

@@ -14,7 +14,7 @@ your server's network load.
 
 **Can I cast to a Chromecast?**
 Yes, from the web app in Chrome (over HTTPS) and from the Android app, with the server. See
-[Casting to a Chromecast](server.md#casting-to-a-chromecast).
+[Casting to a Chromecast](server-after.md#casting-to-a-chromecast).
 
 **Pausing live TV doesn't work.**
 This feature requires the server and ffmpeg (which is included in the Docker image). The buffer is written
