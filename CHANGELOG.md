@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.5.4 (September 2026)
+
+### Server
+
+New:
+
+- Sync progress per list (live channels, movies, series) on the playlist
+- Log and "Download diagnostics" in Settings → System
+
+Fixed:
+
+- Large playlists no longer run out of memory while syncing
+- Providers that only accept known players now work
+- Provider errors now show the HTTP status
+
 ## 0.5.3 (September 2026)
 
 ### Server
