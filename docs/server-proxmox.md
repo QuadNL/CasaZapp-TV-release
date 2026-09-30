@@ -6,8 +6,8 @@ Run this in the shell of your Proxmox host:
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/QuadNL/CasaZapp-TV-release/main/deployment/pve-casazapp-tv-lxc.sh)"
 ```
 
-Read [the script](https://github.com/QuadNL/CasaZapp-TV-release/blob/main/deployment/pve-casazapp-tv-lxc.sh)
-first if you like.
+Never trust a script without reading [the script](https://github.com/QuadNL/CasaZapp-TV-release/blob/main/deployment/pve-casazapp-tv-lxc.sh)
+first, before running it.
 
 ## What it asks
 
