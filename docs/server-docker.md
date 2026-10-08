@@ -82,7 +82,7 @@ The server is `ghcr.io/quadnl/casazapp-tv-release`, for `amd64` and `arm64`
 | -------- | ------------------------------------------ |
 | `latest` | The newest release                         |
 | `0.5`    | The newest 0.5 release, not the next minor |
-| `0.5.4`  | Exactly that version (any version number)  |
+| `0.5.6`  | Exactly that version (any version number)  |
 
 ## Folders
 

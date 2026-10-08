@@ -1,5 +1,34 @@
 # Changelog
 
+## 0.5.6 (October 2026)
+
+### Server
+
+New:
+
+- Added new recording options, you can schedule recordings without an EPG
+- You can now change colour, height and more with subtitle options
+- Improved loading speed when switching between pages
+
+Fixed:
+
+- Fixed player menus going off screen
+
+### Android app
+
+New:
+
+- Added new recording options, you can schedule recordings without an EPG *
+- You can now change colour, height and more with subtitle options
+- Improved loading speed when switching between screens
+- Improved remote control navigation on Android TV
+
+Fixed:
+
+- Fixed pop-ups too large on Android TV
+
+<sub>* Requires CasaZapp TV server v0.5.6</sub>
+
 ## 0.5.4 (September 2026)
 
 ### Server

@@ -71,14 +71,18 @@ jobs:
           # Newest first, as the pop-up reads.
           FILES=$(ls notes/*.json | sort -V -r)
           # English only; the same text under nl too, for apps that look for their own language.
-          jq -s '{new: (map(.en.new // []) | add), fixes: (map(.en.fixes // []) | add)} | {en: ., nl: .}'             $FILES > out/release-notes.json
+          # The newest footnote (note, e.g. "* Requires CasaZapp TV server v0.5.6") goes along; it is
+          # also a line of New, for apps before 0.5.6.
+          jq -s '(map(.en.note // empty) | first) as $n | {new: (map(.en.new // []) | add), fixes: (map(.en.fixes // []) | add)} + (if $n then {note: $n} else {} end) | {en: ., nl: .}'             $FILES > out/release-notes.json
           cat out/release-notes.json
       - name: Publish
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          BODY=$(jq -r '(if (.en.new | length) > 0 then "## New\n" + (.en.new | map("- " + .) | join("\n")) + "\n\n" else "" end)
-            + (if (.en.fixes | length) > 0 then "## Fixed\n" + (.en.fixes | map("- " + .) | join("\n")) else "" end)' out/release-notes.json)
+          # The footnote small below, once.
+          BODY=$(jq -r '(.en.note // "") as $n | ([.en.new[] | select(. != $n)]) as $new | (if ($new | length) > 0 then "## New\n" + ($new | map("- " + .) | join("\n")) + "\n\n" else "" end)
+            + (if (.en.fixes | length) > 0 then "## Fixed\n" + (.en.fixes | map("- " + .) | join("\n")) else "" end)
+            + (if $n != "" then "\n\n<sub>" + $n + "</sub>" else "" end)' out/release-notes.json)
           gh release create "android-v$VERSION" out/casazapp-tv.apk out/version.txt out/release-notes.json \
             -R "$GITHUB_REPOSITORY" \
             --title "Android app $VERSION" \
