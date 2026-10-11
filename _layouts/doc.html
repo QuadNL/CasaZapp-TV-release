@@ -14,6 +14,8 @@ layout: default
     {% for item in android_pages %}{% assign part = item | split: ":" %}{% capture url %}/docs/{{ part[0] }}.html{% endcapture %}
     <a class="doc-sub" href="{{ url | relative_url }}" {% if page.url == url %}aria-current="page"{% endif %}>{{ part[1] }}</a>
     {% endfor %}
+    <a href="{{ '/docs/api.html' | relative_url }}" {% if page.url == '/docs/api.html' %}aria-current="page"{% endif %}>API</a>
+    <a class="doc-sub" href="{{ '/docs/home-assistant.html' | relative_url }}" {% if page.url == '/docs/home-assistant.html' %}aria-current="page"{% endif %}>Home Assistant</a>
     <a href="{{ '/docs/faq.html' | relative_url }}" {% if page.url == '/docs/faq.html' %}aria-current="page"{% endif %}>Questions</a>
     <a href="{{ '/demo/' | relative_url }}" {% if page.url == '/demo/' %}aria-current="page"{% endif %}>Demo playlist</a>
     <a href="{{ '/CHANGELOG.html' | relative_url }}" {% if page.url == '/CHANGELOG.html' %}aria-current="page"{% endif %}>Changelog</a>
