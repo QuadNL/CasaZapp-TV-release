@@ -1,5 +1,36 @@
 # Changelog
 
+## 0.5.7 (October 2026)
+
+### Server
+
+New:
+
+- Introducing API keys which will give you more control over CasaZapp TV server, see [casazapp.tv/api](https://casazapp.tv/api)
+- Excited introduction of Home Assistant integration! See [casazapp.tv/homeassistant](https://casazapp.tv/homeassistant)
+- Improved playlist management: full category and channel names, and drag to reorder
+- Improved the radio playback for web, app and casting devices.
+- Small settings UI optimizations
+
+Fixed:
+
+- Small bugfixes
+
+### Android app
+
+New:
+
+- Improved the radio playback for web, app and casting devices.
+- Small settings UI optimizations
+
+Fixed:
+
+- Small bugfixes
+
+### Home Assistant integration
+
+0.1.0, the first public version: see [CasaZapp-TV-homeassistant](https://github.com/QuadNL/CasaZapp-TV-homeassistant) and [the guide](https://casazapp.tv/homeassistant).
+
 ## 0.5.6 (October 2026)
 
 ### Server
@@ -28,6 +59,24 @@ Fixed:
 - Fixed pop-ups too large on Android TV
 
 <sub>* Requires CasaZapp TV server v0.5.6</sub>
+
+## 0.5.5 (October 2026)
+
+### Server
+
+New:
+
+- Series recording: record every episode of a programme, with options
+- Recording storage: warning when the disk is almost full, and Keep for recordings
+- Guide days per playlist, to plan recordings ahead
+- Move several channels at once in lists
+- Episodes in the player, with next episode and up next
+- Subtitles: upload your own or search OpenSubtitles (free API key), with timing
+
+Fixed:
+
+- Films and episodes without sound in the browser now play with sound
+- No more cast icon over the browser player
 
 ## 0.5.4 (September 2026)
 
