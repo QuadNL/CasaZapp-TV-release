@@ -1,0 +1,43 @@
+# The guides menu: sections, pages and their sub-pages. The side menu, the menu on a phone, the path
+# above a guide and Previous / Next all follow this list, in this order. A new guide goes here once.
+- section: Server
+  pages:
+    - title: Installing the server
+      url: /docs/server.html
+      pages:
+        - title: Proxmox
+          url: /docs/server-proxmox.html
+        - title: Docker
+          url: /docs/server-docker.html
+        - title: After installing
+          url: /docs/server-after.html
+        - title: Settings
+          url: /docs/server-settings.html
+- section: Android app
+  pages:
+    - title: The Android app
+      url: /docs/android.html
+      pages:
+        - title: Installing
+          url: /docs/android-install.html
+        - title: Connecting
+          url: /docs/android-connect.html
+        - title: Without a server
+          url: /docs/android-local.html
+        - title: The remote
+          url: /docs/android-remote.html
+- section: Integrations
+  pages:
+    - title: API
+      url: /docs/api.html
+      pages:
+        - title: Home Assistant
+          url: /docs/home-assistant.html
+- section: More
+  pages:
+    - title: Questions
+      url: /docs/faq.html
+    - title: Demo playlist
+      url: /demo/
+    - title: Changelog
+      url: /CHANGELOG.html

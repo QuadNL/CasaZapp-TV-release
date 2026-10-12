@@ -76,6 +76,7 @@ speaker, a channel or a recording on a TV. On the server's Active now it shows a
 
 Record the evening news every weekday, from an automation:
 
+{% raw %}
 ```yaml
 action: casazapp_tv.record
 data:
@@ -83,6 +84,7 @@ data:
   start: "{{ today_at('20:00') }}"
   stop: "{{ today_at('20:30') }}"
 ```
+{% endraw %}
 
 Play a radio station on the kitchen speaker: open the media browser on that speaker, then
 CasaZapp TV → My lists, and pick the station.

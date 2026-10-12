@@ -38,6 +38,9 @@
   </script>
   <header class="top">
     <div class="wrap top-row">
+      <button type="button" class="menu-btn" aria-label="Menu" aria-expanded="false" aria-controls="drawer">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
       <a class="brand hero-logo" href="{{ '/' | absolute_url }}">
         <svg class="mark" viewBox="0 0 32 32" aria-hidden="true" style="animation: pop 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;">
           <rect width="32" height="32" rx="8" fill="#FFB547"/>
@@ -65,6 +68,30 @@
     </div>
   </header>
 
+  <!-- On a phone (#261): the site's links and the guides in a drawer from the left, the page dimmed behind it. -->
+  <div class="scrim"></div>
+  <aside class="drawer" id="drawer" aria-label="Menu">
+    <div class="drawer-head">
+      <a class="brand" href="{{ '/' | absolute_url }}"><svg class="mark" aria-hidden="true"><use href="#logo"/></svg><span>CasaZapp TV</span></a>
+      <button type="button" class="drawer-close" aria-label="Close the menu">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+    <nav class="drawer-body tree">
+      <p class="tree-sec">CasaZapp TV</p>
+      <a class="tree-top tree-site" href="{{ '/#features' | absolute_url }}">Features</a>
+      <a class="tree-top tree-site" href="{{ '/#screens' | absolute_url }}">Showcase</a>
+      <a class="tree-top tree-site" href="{{ site.repo }}">GitHub</a>
+      {% include guides-tree.html %}
+    </nav>
+    <div class="drawer-foot">
+      <a class="btn btn-primary" href="https://connect.casazapp.tv" target="_blank" rel="noopener">
+        <svg class="ext" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 3.5H6A2.5 2.5 0 0 0 3.5 6v12A2.5 2.5 0 0 0 6 20.5h12a2.5 2.5 0 0 0 2.5-2.5v-4M14 3.5h6.5V10M20.5 3.5 10.5 13.5"/></svg>
+        Open Connect
+      </a>
+    </div>
+  </aside>
+
   <main>
     {{ content }}
   </main>
@@ -81,6 +108,36 @@
   </footer>
 
   <script>
+    // The menu on a phone (#261): opens from ☰, closes with ✕, the dimmed page or Esc; the page doesn't scroll
+    // along. The arrows in the guides fold their group, in the side menu too.
+    (function () {
+      var drawer = document.getElementById('drawer');
+      var scrim = document.querySelector('.scrim');
+      var button = document.querySelector('.menu-btn');
+      function set(open) {
+        document.body.classList.toggle('menu-open', open);
+        button.setAttribute('aria-expanded', String(open));
+        if (open) drawer.querySelector('.drawer-close').focus();
+        else button.focus();
+      }
+      button.addEventListener('click', function () { set(true); });
+      scrim.addEventListener('click', function () { set(false); });
+      drawer.querySelector('.drawer-close').addEventListener('click', function () { set(false); });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && document.body.classList.contains('menu-open')) set(false);
+      });
+      // Wider than a phone again: the drawer is not needed.
+      window.matchMedia('(min-width: 801px)').addEventListener('change', function (m) {
+        if (m.matches && document.body.classList.contains('menu-open')) set(false);
+      });
+      document.querySelectorAll('.tree-fold').forEach(function (fold) {
+        fold.addEventListener('click', function () {
+          var open = fold.closest('.tree-group').classList.toggle('open');
+          fold.setAttribute('aria-expanded', String(open));
+        });
+      });
+    })();
+
     // Every code block gets a copy button, top right.
     document.querySelectorAll('pre').forEach(function (pre) {
       var wrap = document.createElement('div');

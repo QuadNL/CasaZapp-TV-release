@@ -1,27 +1,52 @@
 ---
 layout: default
 ---
+{%- comment -%}
+  Every guide in one row, in the menu's order: url|title|section|group. For the path above the guide
+  and Previous / Next below it (#261).
+{%- endcomment -%}
+{%- assign flat = "" -%}
+{%- for section in site.data.guides -%}
+  {%- for item in section.pages -%}
+    {%- capture flat -%}{{ flat }}{{ item.url }}|{{ item.title }}|{{ section.section }}|;;{%- endcapture -%}
+    {%- for sub in item.pages -%}
+      {%- capture flat -%}{{ flat }}{{ sub.url }}|{{ sub.title }}|{{ section.section }}|{{ item.title }};;{%- endcapture -%}
+    {%- endfor -%}
+  {%- endfor -%}
+{%- endfor -%}
+{%- assign rows = flat | split: ";;" -%}
+{%- assign here = -1 -%}
+{%- for row in rows -%}
+  {%- assign f = row | split: "|" -%}
+  {%- if f[0] == page.url -%}{%- assign here = forloop.index0 -%}{%- assign me = f -%}{%- endif -%}
+{%- endfor -%}
 <div class="wrap doc">
-  <nav class="doc-nav" aria-label="Guides">
-    <p class="doc-nav-title">Guides</p>
-    <a href="{{ '/docs/server.html' | relative_url }}" {% if page.url == '/docs/server.html' %}aria-current="page"{% endif %}>Installing the server</a>
-    {% assign server_pages = "server-proxmox:Proxmox,server-docker:Docker,server-after:After installing,server-settings:Settings" | split: "," %}
-    {% for item in server_pages %}{% assign part = item | split: ":" %}{% capture url %}/docs/{{ part[0] }}.html{% endcapture %}
-    <a class="doc-sub" href="{{ url | relative_url }}" {% if page.url == url %}aria-current="page"{% endif %}>{{ part[1] }}</a>
-    {% endfor %}
-    <a href="{{ '/docs/android.html' | relative_url }}" {% if page.url == '/docs/android.html' %}aria-current="page"{% endif %}>The Android app</a>
-    {% assign android_pages = "android-install:Installing,android-connect:Connecting,android-local:Without a server,android-remote:The remote" | split: "," %}
-    {% for item in android_pages %}{% assign part = item | split: ":" %}{% capture url %}/docs/{{ part[0] }}.html{% endcapture %}
-    <a class="doc-sub" href="{{ url | relative_url }}" {% if page.url == url %}aria-current="page"{% endif %}>{{ part[1] }}</a>
-    {% endfor %}
-    <a href="{{ '/docs/api.html' | relative_url }}" {% if page.url == '/docs/api.html' %}aria-current="page"{% endif %}>API</a>
-    <a class="doc-sub" href="{{ '/docs/home-assistant.html' | relative_url }}" {% if page.url == '/docs/home-assistant.html' %}aria-current="page"{% endif %}>Home Assistant</a>
-    <a href="{{ '/docs/faq.html' | relative_url }}" {% if page.url == '/docs/faq.html' %}aria-current="page"{% endif %}>Questions</a>
-    <a href="{{ '/demo/' | relative_url }}" {% if page.url == '/demo/' %}aria-current="page"{% endif %}>Demo playlist</a>
-    <a href="{{ '/CHANGELOG.html' | relative_url }}" {% if page.url == '/CHANGELOG.html' %}aria-current="page"{% endif %}>Changelog</a>
+  <nav class="doc-nav tree" aria-label="Guides">
+    {% include guides-tree.html %}
   </nav>
   <article class="prose">
+    {%- if here >= 0 %}
+    <p class="crumb">{{ me[2] }}{% if me[3] %} › {{ me[3] }}{% endif %}</p>
+    {%- endif %}
     {{ content }}
+    {%- if here >= 0 %}
+    {%- assign before = here | minus: 1 -%}
+    {%- assign after = here | plus: 1 %}
+    <nav class="pager" aria-label="Previous and next guide">
+      {%- if before >= 0 %}{% assign p = rows[before] | split: "|" %}
+      <a class="pager-prev" href="{{ p[0] | absolute_url }}">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg>
+        <span><small>Previous</small>{{ p[1] }}</span>
+      </a>
+      {%- else %}<span></span>{%- endif %}
+      {%- if after < rows.size %}{% assign n = rows[after] | split: "|" %}
+      <a class="pager-next" href="{{ n[0] | absolute_url }}">
+        <span><small>Next</small>{{ n[1] }}</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+      </a>
+      {%- endif %}
+    </nav>
+    {%- endif %}
     <p class="edit"><a href="{{ site.repo }}/edit/main/{{ page.path }}">Improve this page on GitHub</a></p>
-  </article> 
+  </article>
 </div>

@@ -1,0 +1,30 @@
+{% comment %}
+  The guides as a tree (#261), from _data/guides.yml: section headers, groups with an arrow, sub-pages on a
+  thin line. The group the current page is in starts open, and the current page is marked. The name of a group
+  opens its page; the arrow folds it. Absolute links: the connect page is also served on connect.casazapp.tv.
+{% endcomment %}
+{% for section in site.data.guides %}
+  <p class="tree-sec">{{ section.section }}</p>
+  {% for item in section.pages %}
+    {% if item.pages %}
+      {% assign open = false %}
+      {% if page.url == item.url %}{% assign open = true %}{% endif %}
+      {% for sub in item.pages %}{% if page.url == sub.url %}{% assign open = true %}{% endif %}{% endfor %}
+      <div class="tree-group{% if open %} open{% endif %}">
+        <div class="tree-row">
+          <a href="{{ item.url | absolute_url }}" {% if page.url == item.url %}aria-current="page"{% endif %}>{{ item.title }}</a>
+          <button type="button" class="tree-fold" aria-expanded="{{ open }}" aria-label="Show the pages of {{ item.title }}">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+          </button>
+        </div>
+        <div class="tree-kids">
+          {% for sub in item.pages %}
+            <a href="{{ sub.url | absolute_url }}" {% if page.url == sub.url %}aria-current="page"{% endif %}>{{ sub.title }}</a>
+          {% endfor %}
+        </div>
+      </div>
+    {% else %}
+      <a class="tree-top" href="{{ item.url | absolute_url }}" {% if page.url == item.url %}aria-current="page"{% endif %}>{{ item.title }}</a>
+    {% endif %}
+  {% endfor %}
+{% endfor %}
