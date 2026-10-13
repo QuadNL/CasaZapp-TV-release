@@ -1,5 +1,40 @@
 # Changelog
 
+## 0.5.8 (October 2026)
+
+### Server
+
+New:
+
+- Introducing Universal Search: Find channels, programmes, movies, series and recordings from any page with Ctrl/⌘ + K.
+- Recordings can now be combined into one .mkv file once they are finished. This is optional; turn it on in Settings → Recordings
+- Recurring recordings are now visible as a series in the recordings tab. This gives a better overview and episode tracking.
+- Added new features for the Home Assistant integration, see [casazapp.tv/homeassistant](https://casazapp.tv/homeassistant).
+
+Fixed:
+
+- Small bugfixes
+
+### Android app
+
+New:
+
+- Recurring recordings are now visible as a series in the recordings tab. This gives a better overview and episode tracking.
+- As mentioned with the previous server release, Home Assistant is now integrated with CasaZapp TV. You can now control your CasaZapp TV app with Home Assistant. Check it out at [casazapp.tv/homeassistant](https://casazapp.tv/homeassistant)!
+
+Fixed:
+
+- Small bugfixes
+
+### Home Assistant integration
+
+0.1.1:
+
+- Play and stop on the CasaZapp TV app. This needs server and app 0.5.8, with "Allow remote control" turned on in the app
+- Shows what is playing when someone watches a recording, and can stop it
+
+<sub>CasaZapp TV is continuously in development. If you have any ideas, feature requests or bugs, report them on [GitHub](https://github.com/QuadNL/CasaZapp-TV-release/issues).</sub>
+
 ## 0.5.7 (October 2026)
 
 ### Server
