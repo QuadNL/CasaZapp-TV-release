@@ -38,7 +38,7 @@ answer and a button to try it:
 | Status | What happens on the server |
 | Recent | What the key's profile watched |
 | Channels | The profile's favourites, lists and playlists |
-| Play | A channel or recording on a speaker or player of your own |
+| Play | A channel or recording on a speaker or player of your own, or on a CasaZapp TV app with remote control |
 | Recordings | Plan, stop and remove |
 | Streams | Who watches, and stopping a stream |
 | Pictures | Logos and stills, with the same key |

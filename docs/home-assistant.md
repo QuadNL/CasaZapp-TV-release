@@ -72,6 +72,37 @@ categories, as in the apps) and Recordings. Pick a speaker or player and play: r
 speaker, a channel or a recording on a TV. On the server's Active now it shows as
 "_key name_: _speaker_", and you can stop it there or in Home Assistant.
 
+## Playing on the CasaZapp TV app
+
+From server and app 0.5.8, Home Assistant can also play on the CasaZapp TV app itself, for example
+on your television:
+
+1. On the device, in the app: Settings → Connection and devices → **Allow remote control** → On.
+   It is off by default, and only the device itself can turn it on.
+2. While the app is open, its media player in Home Assistant can play a channel or recording from
+   the media browser, and stop it.
+
+**When the app is closed** it can't hear anything. A link opens it and plays right away:
+
+- `casazapp://play/channel/12`
+- `casazapp://play/recording/276`
+- `casazapp://play/movie/40`
+- `casazapp://play/episode/<series>/<episode>`
+
+The number is in the web app's address: `/watch/12` for a channel, `/recordings/276` for a
+recording. With the [Android TV](https://www.home-assistant.io/integrations/androidtv/)
+integration, a script opens it on the television:
+
+```yaml
+action: androidtv.adb_command
+target:
+  entity_id: media_player.living_room_tv
+data:
+  command: am start -a android.intent.action.VIEW -d casazapp://play/channel/12 nl.casazapp.tv
+```
+
+If the app asks who's watching, it plays as soon as a profile is chosen.
+
 ## Examples
 
 Record the evening news every weekday, from an automation:
@@ -94,4 +125,7 @@ CasaZapp TV → My lists, and pick the station.
 - **The integration asks for the key again:** the key was revoked. Make a new one and fill it in.
 - **A speaker doesn't show the channels:** it only shows what it can play. Channels come as
   sound for a speaker and as video for a screen.
+- **The app's player has no play button:** the app isn't open, or "Allow remote control" is off
+  there. Home Assistant links the player by the device's name, so two devices with that name and
+  remote control on can't be told apart: give one a name of its own when you pair it.
 - Anything else: [open an issue](https://github.com/QuadNL/CasaZapp-TV-release/issues).
