@@ -87,11 +87,33 @@ on your television:
 - `casazapp://play/channel/12`
 - `casazapp://play/recording/276`
 - `casazapp://play/movie/40`
-- `casazapp://play/episode/<series>/<episode>`
 
-The number is in the web app's address: `/watch/12` for a channel, `/recordings/276` for a
-recording. With the [Android TV](https://www.home-assistant.io/integrations/androidtv/)
-integration, a script opens it on the television:
+The number is the one on your own server. To find it, open the channel, recording or film in the
+web app and look at the address:
+
+| In the web app | Link |
+| --- | --- |
+| `/watch/12` | `casazapp://play/channel/12` |
+| `/recordings/276` | `casazapp://play/recording/276` |
+| `/movie/40` | `casazapp://play/movie/40` |
+
+With an API key, `/api/playlists/<id>/channels` and `/api/recordings` give the numbers too.
+
+With the [Android TV Remote](https://www.home-assistant.io/integrations/androidtv_remote/)
+integration, which most Google TV and Android TV devices use, a script opens it on the
+television:
+
+```yaml
+action: media_player.play_media
+target:
+  entity_id: media_player.living_room_tv
+data:
+  media_content_type: url
+  media_content_id: casazapp://play/channel/12
+```
+
+With the [Android Debug Bridge](https://www.home-assistant.io/integrations/androidtv/)
+integration it goes like this:
 
 ```yaml
 action: androidtv.adb_command
@@ -101,7 +123,7 @@ data:
   command: am start -a android.intent.action.VIEW -d casazapp://play/channel/12 nl.casazapp.tv
 ```
 
-If the app asks who's watching, it plays as soon as a profile is chosen.
+If the app isn't paired yet or asks who's watching, it plays as soon as that is done.
 
 ## Examples
 
