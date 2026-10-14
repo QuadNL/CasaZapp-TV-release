@@ -9,6 +9,8 @@ For all information and instructions visit https://casazapp.tv.
 CasaZapp TV gives you the best set-topbox experience you want. It runs on docker, so your
 channel lists, favourites, recordings and watch history stay with you in sync across all your devices.
 
+<img width="600" height="auto" alt="image" src="https://github.com/user-attachments/assets/89f11b0a-efef-412c-8924-ae8db9de85fb" />
+
 There are two parts:
 
 - **The server**, a Docker image. It keeps your playlists, fetches the programme guide, records,
